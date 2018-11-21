@@ -65,52 +65,63 @@ Player::Player(QWidget *parent)
     : QWidget(parent)
 {
 //! [create-objs]
-    m_player = new QMediaPlayer(this);
-    m_player->setAudioRole(QAudio::VideoRole);
+    m_playerPrimary = new QMediaPlayer(this);
+    m_playerPrimary->setAudioRole(QAudio::VideoRole);
     qInfo() << "Supported audio roles:";
-    for (QAudio::Role role : m_player->supportedAudioRoles())
+    for (QAudio::Role role : m_playerPrimary->supportedAudioRoles())
         qInfo() << "    " << role;
     // owned by PlaylistModel
-    m_playlist = new QMediaPlaylist();
-    m_player->setPlaylist(m_playlist);
+    m_playlist_primary = new QMediaPlaylist();
+    m_playerPrimary->setPlaylist(m_playlist_primary);
 
     m_playerSecondary = new QMediaPlayer(this);
-    m_playerSecondary->setPlaylist(m_playlist);
+    m_playerSecondary->setAudioRole(QAudio::VideoRole);
+    m_playlist_secondary = new QMediaPlaylist();
+    m_playerSecondary->setPlaylist(m_playlist_secondary);
 
 //! [create-objs]
 
-    connect(m_player, &QMediaPlayer::durationChanged, this, &Player::durationChanged);
-    connect(m_player, &QMediaPlayer::positionChanged, this, &Player::positionChanged);
-    connect(m_player, QOverload<>::of(&QMediaPlayer::metaDataChanged), this, &Player::metaDataChanged);
-    connect(m_playlist, &QMediaPlaylist::currentIndexChanged, this, &Player::playlistPositionChanged);
-    connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &Player::statusChanged);
-    connect(m_player, &QMediaPlayer::bufferStatusChanged, this, &Player::bufferingProgress);
-    connect(m_player, &QMediaPlayer::videoAvailableChanged, this, &Player::videoAvailableChanged);
-    connect(m_player, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), this, &Player::displayErrorMessage);
-    connect(m_player, &QMediaPlayer::stateChanged, this, &Player::stateChanged);
+    connect(m_playerPrimary, &QMediaPlayer::durationChanged, this, &Player::durationChanged);
+    connect(m_playerPrimary, &QMediaPlayer::positionChanged, this, &Player::positionChanged);
+    connect(m_playerPrimary, QOverload<>::of(&QMediaPlayer::metaDataChanged), this, &Player::metaDataChanged);
+    connect(m_playlist_primary, &QMediaPlaylist::currentIndexChanged, this, &Player::playlistPositionChanged);
+    connect(m_playerPrimary, &QMediaPlayer::mediaStatusChanged, this, &Player::statusChanged);
+    connect(m_playerPrimary, &QMediaPlayer::bufferStatusChanged, this, &Player::bufferingProgress);
+    connect(m_playerPrimary, &QMediaPlayer::videoAvailableChanged, this, &Player::videoAvailableChanged);
+    connect(m_playerPrimary, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), this, &Player::displayErrorMessage);
+    connect(m_playerPrimary, &QMediaPlayer::stateChanged, this, &Player::stateChanged);
+
+    connect(m_playerSecondary, &QMediaPlayer::durationChanged, this, &Player::durationChanged);
+    connect(m_playerSecondary, &QMediaPlayer::positionChanged, this, &Player::positionChanged);
+    connect(m_playerSecondary, QOverload<>::of(&QMediaPlayer::metaDataChanged), this, &Player::metaDataChanged);
+    connect(m_playlist_secondary, &QMediaPlaylist::currentIndexChanged, this, &Player::playlistPositionChanged);
+    connect(m_playerSecondary, &QMediaPlayer::mediaStatusChanged, this, &Player::statusChanged);
+    connect(m_playerSecondary, &QMediaPlayer::bufferStatusChanged, this, &Player::bufferingProgress);
+    connect(m_playerSecondary, &QMediaPlayer::videoAvailableChanged, this, &Player::videoAvailableChanged);
+    connect(m_playerSecondary, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), this, &Player::displayErrorMessage);
+    connect(m_playerSecondary, &QMediaPlayer::stateChanged, this, &Player::stateChanged);
 
 //! [2]
     //Primary Video Widget
     primaryVideoWidget = new VideoWidget(this);
-    m_player->setVideoOutput(primaryVideoWidget);
+    m_playerPrimary->setVideoOutput(primaryVideoWidget);
 
     m_playlistModel = new PlaylistModel(this);
-    m_playlistModel->setPlaylist(m_playlist);
+    m_playlistModel->setPlaylist(m_playlist_primary);
 
     //Secondary Video Widget
     secondaryVideoWidget = new VideoWidget(this);
     //m_player->setVideoOutput(secondaryVideoWidget);
 
 //! [2]
-
     m_playlistView = new QListView(this);
     m_playlistView->setModel(m_playlistModel);
-    m_playlistView->setCurrentIndex(m_playlistModel->index(m_playlist->currentIndex(), 0));
+    m_playlistView->setCurrentIndex(m_playlistModel->index(m_playlist_primary->currentIndex(), 0));
 
     connect(m_playlistView, &QAbstractItemView::activated, this, &Player::jump);
 
     m_slider = new QSlider(Qt::Horizontal, this);
-    m_slider->setRange(0, m_player->duration() / 1000);
+    m_slider->setRange(0, m_playerPrimary->duration() / 1000);
 
     m_labelDuration = new QLabel(this);
     connect(m_slider, &QSlider::sliderMoved, this, &Player::seek);
@@ -120,39 +131,43 @@ Player::Player(QWidget *parent)
     connect(openButton, &QPushButton::clicked, this, &Player::open);
 
     PlayerControls *controls = new PlayerControls(this);
-    controls->setState(m_player->state());
-    controls->setVolume(m_player->volume());
+    controls->setState(m_playerPrimary->state());
+    controls->setVolume(m_playerPrimary->volume());
     controls->setMuted(controls->isMuted());
 
-    connect(controls, &PlayerControls::play, m_player, &QMediaPlayer::play);
-    connect(controls, &PlayerControls::pause, m_player, &QMediaPlayer::pause);
-    connect(controls, &PlayerControls::stop, m_player, &QMediaPlayer::stop);
-    connect(controls, &PlayerControls::next, m_playlist, &QMediaPlaylist::next);
+    connect(controls, &PlayerControls::play, m_playerPrimary, &QMediaPlayer::play);
+    connect(controls, &PlayerControls::pause, m_playerPrimary, &QMediaPlayer::pause);
+    connect(controls, &PlayerControls::stop, m_playerPrimary, &QMediaPlayer::stop);
+    connect(controls, &PlayerControls::next, m_playlist_primary, &QMediaPlaylist::next);
     connect(controls, &PlayerControls::previous, this, &Player::previousClicked);
-    connect(controls, &PlayerControls::changeVolume, m_player, &QMediaPlayer::setVolume);
-    connect(controls, &PlayerControls::changeMuting, m_player, &QMediaPlayer::setMuted);
-    connect(controls, &PlayerControls::changeRate, m_player, &QMediaPlayer::setPlaybackRate);
+    connect(controls, &PlayerControls::changeVolume, m_playerPrimary, &QMediaPlayer::setVolume);
+    connect(controls, &PlayerControls::changeMuting, m_playerPrimary, &QMediaPlayer::setMuted);
+    connect(controls, &PlayerControls::changeRate, m_playerPrimary, &QMediaPlayer::setPlaybackRate);
     connect(controls, &PlayerControls::stop, primaryVideoWidget, QOverload<>::of(&QVideoWidget::update));
 
-    connect(m_player, &QMediaPlayer::stateChanged, controls, &PlayerControls::setState);
-    connect(m_player, &QMediaPlayer::volumeChanged, controls, &PlayerControls::setVolume);
-    connect(m_player, &QMediaPlayer::mutedChanged, controls, &PlayerControls::setMuted);
+    connect(m_playerPrimary, &QMediaPlayer::stateChanged, controls, &PlayerControls::setState);
+    connect(m_playerPrimary, &QMediaPlayer::volumeChanged, controls, &PlayerControls::setVolume);
+    connect(m_playerPrimary, &QMediaPlayer::mutedChanged, controls, &PlayerControls::setMuted);
+
+    //Buttons
+    connectVideoButton = new QPushButton("Connect Video", this);
+    saveButton = new QPushButton("Save", this);
 
     m_fullScreenButton = new QPushButton(tr("FullScreen"), this);
     m_fullScreenButton->setCheckable(true);
 
     m_colorButton = new QPushButton(tr("Color Options..."), this);
     m_colorButton->setEnabled(false);
+
+    connect(connectVideoButton, &QPushButton::clicked, this, &Player::connectVideo);
+    connect(saveButton, &QPushButton::clicked, this, &Player::saveFile);
     connect(m_colorButton, &QPushButton::clicked, this, &Player::showColorDialog);
 
     /****************************************************************/
     QBoxLayout *displayLayout = new QHBoxLayout;
-    displayLayout->addWidget(primaryVideoWidget);
-    //displayLayout->addWidget(m_playlistView);
-
-    QBoxLayout *displaySecondaryVideoLayout = new QHBoxLayout;
-    displaySecondaryVideoLayout->addWidget(secondaryVideoWidget);
-    displaySecondaryVideoLayout->setMargin(5);
+    displayLayout->addWidget(primaryVideoWidget,2);
+    displayLayout->addWidget(m_playlistView,1);
+    displayLayout->addWidget(secondaryVideoWidget,2);
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
@@ -162,10 +177,11 @@ Player::Player(QWidget *parent)
     controlLayout->addStretch(1);
     controlLayout->addWidget(m_fullScreenButton);
     controlLayout->addWidget(m_colorButton);
+    controlLayout->addWidget(connectVideoButton);
+    controlLayout->addWidget(saveButton);
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(displayLayout);
-    layout->addLayout(displaySecondaryVideoLayout);
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(m_slider);
     hLayout->addWidget(m_labelDuration);
@@ -204,7 +220,7 @@ Player::~Player()
 
 bool Player::isPlayerAvailable() const
 {
-    return m_player->isAvailable();
+    return m_playerPrimary->isAvailable();
 }
 
 void Player::open()
@@ -212,7 +228,7 @@ void Player::open()
     QFileDialog fileDialog(this);
     fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
     fileDialog.setWindowTitle(tr("Open Files"));
-    QStringList supportedMimeTypes = m_player->supportedMimeTypes();
+    QStringList supportedMimeTypes = m_playerPrimary->supportedMimeTypes();
     if (!supportedMimeTypes.isEmpty()) {
         supportedMimeTypes.append("audio/x-m3u"); // MP3 playlists
         fileDialog.setMimeTypeFilters(supportedMimeTypes);
@@ -220,6 +236,16 @@ void Player::open()
     fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath()));
     if (fileDialog.exec() == QDialog::Accepted)
         addToPlaylist(fileDialog.selectedUrls());
+}
+
+void Player::connectVideo()
+{
+
+}
+
+void Player::saveFile()
+{
+
 }
 
 static bool isPlaylist(const QUrl &url) // Check for ".m3u" playlists.
@@ -234,15 +260,15 @@ void Player::addToPlaylist(const QList<QUrl> &urls)
 {
     for (auto &url: urls) {
         if (isPlaylist(url))
-            m_playlist->load(url);
+            m_playlist_primary->load(url);
         else
-            m_playlist->addMedia(url);
+            m_playlist_primary->addMedia(url);
     }
 }
 
 void Player::setCustomAudioRole(const QString &role)
 {
-    m_player->setCustomAudioRole(role);
+    m_playerPrimary->setCustomAudioRole(role);
 }
 
 void Player::durationChanged(qint64 duration)
@@ -261,13 +287,13 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    if (m_player->isMetaDataAvailable()) {
+    if (m_playerPrimary->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(m_player->metaData(QMediaMetaData::AlbumArtist).toString())
-                .arg(m_player->metaData(QMediaMetaData::Title).toString()));
+                .arg(m_playerPrimary->metaData(QMediaMetaData::AlbumArtist).toString())
+                .arg(m_playerPrimary->metaData(QMediaMetaData::Title).toString()));
 
         if (m_coverLabel) {
-            QUrl url = m_player->metaData(QMediaMetaData::CoverArtUrlLarge).value<QUrl>();
+            QUrl url = m_playerPrimary->metaData(QMediaMetaData::CoverArtUrlLarge).value<QUrl>();
 
             m_coverLabel->setPixmap(!url.isEmpty()
                     ? QPixmap(url.toString())
@@ -280,17 +306,17 @@ void Player::previousClicked()
 {
     // Go to previous track if we are within the first 5 seconds of playback
     // Otherwise, seek to the beginning.
-    if (m_player->position() <= 5000)
-        m_playlist->previous();
+    if (m_playerPrimary->position() <= 5000)
+        m_playlist_primary->previous();
     else
-        m_player->setPosition(0);
+        m_playerPrimary->setPosition(0);
 }
 
 void Player::jump(const QModelIndex &index)
 {
     if (index.isValid()) {
-        m_playlist->setCurrentIndex(index.row());
-        m_player->play();
+        m_playlist_primary->setCurrentIndex(index.row());
+        m_playerPrimary->play();
     }
 }
 
@@ -301,7 +327,7 @@ void Player::playlistPositionChanged(int currentItem)
 
 void Player::seek(int seconds)
 {
-    m_player->setPosition(seconds * 1000);
+    m_playerPrimary->setPosition(seconds * 1000);
 }
 
 void Player::statusChanged(QMediaPlayer::MediaStatus status)
@@ -320,10 +346,10 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
         break;
     case QMediaPlayer::BufferingMedia:
     case QMediaPlayer::BufferedMedia:
-        setStatusInfo(tr("Buffering %1%").arg(m_player->bufferStatus()));
+        setStatusInfo(tr("Buffering %1%").arg(m_playerPrimary->bufferStatus()));
         break;
     case QMediaPlayer::StalledMedia:
-        setStatusInfo(tr("Stalled %1%").arg(m_player->bufferStatus()));
+        setStatusInfo(tr("Stalled %1%").arg(m_playerPrimary->bufferStatus()));
         break;
     case QMediaPlayer::EndOfMedia:
         QApplication::alert(this);
@@ -356,7 +382,7 @@ void Player::handleCursor(QMediaPlayer::MediaStatus status)
 
 void Player::bufferingProgress(int progress)
 {
-    if (m_player->mediaStatus() == QMediaPlayer::StalledMedia)
+    if (m_playerPrimary->mediaStatus() == QMediaPlayer::StalledMedia)
         setStatusInfo(tr("Stalled %1%").arg(progress));
     else
         setStatusInfo(tr("Buffering %1%").arg(progress));
@@ -410,7 +436,7 @@ void Player::setStatusInfo(const QString &info)
 
 void Player::displayErrorMessage()
 {
-    setStatusInfo(m_player->errorString());
+    setStatusInfo(m_playerPrimary->errorString());
 }
 
 void Player::updateDurationInfo(qint64 currentInfo)

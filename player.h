@@ -108,6 +108,10 @@ private slots:
 
     void showColorDialog();
 
+    void connectVideo();
+
+    void saveFile();
+
 private:
     void clearHistogram();
     void setTrackInfo(const QString &info);
@@ -115,9 +119,10 @@ private:
     void handleCursor(QMediaPlayer::MediaStatus status);
     void updateDurationInfo(qint64 currentInfo);
 
-    QMediaPlayer *m_player = nullptr;
+    QMediaPlayer *m_playerPrimary = nullptr;
     QMediaPlayer *m_playerSecondary = nullptr;
-    QMediaPlaylist *m_playlist = nullptr;
+    QMediaPlaylist *m_playlist_primary = nullptr;
+    QMediaPlaylist *m_playlist_secondary = nullptr;
     QVideoWidget *primaryVideoWidget = nullptr;
     QVideoWidget *secondaryVideoWidget = nullptr;
     QLabel *m_coverLabel = nullptr;
@@ -125,6 +130,8 @@ private:
     QLabel *m_labelDuration = nullptr;
     QPushButton *m_fullScreenButton = nullptr;
     QPushButton *m_colorButton = nullptr;
+    QPushButton *connectVideoButton = nullptr;
+    QPushButton *saveButton = nullptr;
     QDialog *m_colorDialog = nullptr;
     QLabel *m_statusLabel = nullptr;
     QStatusBar *m_statusBar = nullptr;

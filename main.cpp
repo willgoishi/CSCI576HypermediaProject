@@ -13,15 +13,13 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-
+    /*QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Hypermedia Project");
-    QCoreApplication::setApplicationVersion(QT_VERSION_STR);
-    QCommandLineParser parser;
-    QCommandLineOption customAudioRoleOption("custom-audio-role",
-                                             "Set a custom audio role for the player.",
-                                             "role");
-
+        QCoreApplication::setApplicationVersion(QT_VERSION_STR);
+        QCommandLineParser parser;
+        QCommandLineOption customAudioRoleOption("custom-audio-role",
+                                                 "Set a custom audio role for the player.",
+                                                 "role");
     parser.setApplicationDescription("HyperMedia Player");
     parser.addHelpOption();
     parser.addVersionOption();
@@ -42,5 +40,10 @@ int main(int argc, char *argv[])
     }
 
     player.show();
+    return app.exec();*/
+
+    QApplication app(argc, argv);
+    MainWindow mainWindow;
+    mainWindow.showMinimized();
     return app.exec();
 }
