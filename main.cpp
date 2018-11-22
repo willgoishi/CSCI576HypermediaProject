@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-#include<QMediaPlayer>
-#include<QVideoWidget>
 
 #include "player.h"
 
@@ -45,5 +43,6 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     MainWindow mainWindow;
     mainWindow.showMinimized();
+
     return app.exec();
 }
