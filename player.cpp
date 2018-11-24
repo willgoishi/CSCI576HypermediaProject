@@ -49,6 +49,7 @@
 ****************************************************************************/
 
 #include "player.h"
+#include "image.h"
 
 #include "playercontrols.h"
 #include "playlistmodel.h"
@@ -60,6 +61,8 @@
 #include <QAudioProbe>
 #include <QMediaMetaData>
 #include <QtWidgets>
+
+#include <QTextStream>
 
 Player::Player(QWidget *parent)
     : QWidget(parent)
@@ -223,19 +226,34 @@ bool Player::isPlayerAvailable() const
     return m_playerPrimary->isAvailable();
 }
 
-void Player::open()
+void Player::load()
 {
-    QFileDialog fileDialog(this);
-    fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
-    fileDialog.setWindowTitle(tr("Open Files"));
-    QStringList supportedMimeTypes = m_playerPrimary->supportedMimeTypes();
-    if (!supportedMimeTypes.isEmpty()) {
-        supportedMimeTypes.append("audio/x-m3u"); // MP3 playlists
-        fileDialog.setMimeTypeFilters(supportedMimeTypes);
+    /*Upload Files Here*/
+    //QImage for RGB Images
+    //QVideoFrame
+
+    QFileDialog uploadDialog(this);
+    uploadDialog.setAcceptMode(QFileDialog::AcceptOpen);
+    uploadDialog.setWindowTitle("Import Files");
+
+    QTextStream out(stdout);
+    QStringList fileNames = uploadDialog.getOpenFileNames(this,"Select Files to Upload", QDir::homePath(), tr("(*rgb);;AllFiles(*)"));
+    if(fileNames.count() > 0)
+    {
+        for(int fn = 0; fn < fileNames.count(); fn++)
+        {
+            const char* imagePath = fileNames.at(fn).toLocal8Bit().data();
+
+            Image image;
+            image.setHeight(352);
+            image.setWidth(288);
+            image.setImagePath(imagePath);
+            image.ReadImage();
+
+            Images.push_back(new QImage((const unsigned char*)image.getImageData(), 352, 288, QImage::Format_RGB32));
+
+        }
     }
-    fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath()));
-    if (fileDialog.exec() == QDialog::Accepted)
-        addToPlaylist(fileDialog.selectedUrls());
 }
 
 void Player::connectVideo()

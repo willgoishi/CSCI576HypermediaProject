@@ -31,7 +31,7 @@ SOURCES += \
         playlistmodel.cpp \
         playercontrols.cpp \
         player.cpp \
-    myplayer.cpp \
+    image.cpp
     drawarea.cpp \
     mywidget.cpp \
     mygraphicsview.cpp
@@ -41,7 +41,7 @@ HEADERS += \
         playlistmodel.h \
         playercontrols.h \
         player.h \
-    myplayer.h \
+    image.h
     drawarea.h \
     mywidget.h \
     mygraphicsview.h

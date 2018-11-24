@@ -74,7 +74,6 @@ class HistogramWidget;
 class Player : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit Player(QWidget *parent = nullptr);
     ~Player();
@@ -88,7 +87,7 @@ signals:
     void fullScreenChanged(bool fullScreen);
 
 private slots:
-    void open();
+    void load();
     void durationChanged(qint64 duration);
     void positionChanged(qint64 progress);
     void metaDataChanged();
@@ -147,6 +146,8 @@ private:
     QString m_trackInfo;
     QString m_statusInfo;
     qint64 m_duration;
+
+    std::vector<QImage*> Images;
 };
 
 #endif // PLAYER_H
