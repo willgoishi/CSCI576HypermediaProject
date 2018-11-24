@@ -131,7 +131,7 @@ Player::Player(QWidget *parent)
 
     QPushButton *openButton = new QPushButton(tr("Open"), this);
 
-    connect(openButton, &QPushButton::clicked, this, &Player::open);
+    connect(openButton, &QPushButton::clicked, this, &Player::load);
 
     PlayerControls *controls = new PlayerControls(this);
     controls->setState(m_playerPrimary->state());

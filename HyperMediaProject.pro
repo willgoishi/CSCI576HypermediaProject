@@ -31,7 +31,7 @@ SOURCES += \
         playlistmodel.cpp \
         playercontrols.cpp \
         player.cpp \
-        image.cpp
+        image.cpp \
         myplayer.cpp
 HEADERS += \
         mainwindow.h \
@@ -39,7 +39,7 @@ HEADERS += \
         playlistmodel.h \
         playercontrols.h \
         player.h \
-        image.h
+        image.h \
         myplayer.h
 FORMS += \
         mainwindow.ui
