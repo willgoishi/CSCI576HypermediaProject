@@ -3,8 +3,13 @@
 
 #include <QWidget>
 #include <QMediaPlayer>
-#include <QVideoWidget>
+//#include <QVideoWidget>
 #include <QString>
+#include <QColor>
+#include <QImage>
+#include <QPoint>
+#include <QMouseEvent>
+
 
 class MyPlayer :
     public QWidget
@@ -14,6 +19,8 @@ public:
     explicit MyPlayer(QString, int, QWidget *parent = nullptr);
 
     QVideoWidget *m_videoWidget = nullptr;
+
+protected:
 
 private:
     QMediaPlayer *m_player = nullptr;
