@@ -6,8 +6,6 @@
 #include <QMediaPlayer>
 #include <QApplication>
 
-#include "player.h"
-
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
 class QLabel;
@@ -32,13 +30,14 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    Player *hyperLinkWindow;
     ~MainWindow();
 
 
 private slots:
-    void on_sliderLeft_changed();
-    void on_sliderRight_changed();
+    void on_sliderLeft_changed(int);
+    void on_sliderRight_changed(int);
+    void on_createNewHyperlink_clicked();
+    void on_selectLinks_changed(int);
 
 private:
     Ui::MainWindow *ui;

@@ -26,16 +26,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // Add placeholder items to combox dropdown
-    ui->comboBox->addItem("Doctor");
-    ui->comboBox->addItem("Dinosaur");
-    ui->comboBox->addItem("Dinosaur2");
+    ui->selectLinks->addItem("Doctor");
+    ui->selectLinks->addItem("Dinosaur");
+//    ui->selectLinks->addItem("Dinosaur2");
 
+
+    // Slider
+    ui->horizontalSliderLeft->setTickInterval(20);
+    ui->horizontalSliderLeft->setSingleStep(1);
 
     MyGraphicsView* view = new MyGraphicsView(this);
     view->setGeometry(10, 180, 10 + 352, 180 + 288);
 //                        Qt::RoundJoin));
     view->resize(352, 288);
     this->layout()->addWidget(view);
+
+
 
 
     MyGraphicsView* graphicsView = new MyGraphicsView(this);
@@ -51,8 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
 //    this->layout()->addWidget(player2->m_videoWidget);
 
     // Connect sliders to function
-    connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed()));
-    connect(ui->horizontalSliderRight, SIGNAL(valueChanged(int)), this, SLOT(on_sliderRight_changed()));
+    connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed(int)));
+    connect(ui->horizontalSliderRight, SIGNAL(valueChanged(int)), this, SLOT(on_sliderRight_changed(int)));
+    connect(ui->createNewHyperLink, SIGNAL(released()), this, SLOT(on_createNewHyperlink_clicked()));
+    connect(ui->selectLinks, SIGNAL(activated(int)), this, SLOT(on_selectLinks_changed(int)));
 
     resize(960, 640);
 }
@@ -62,21 +70,29 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_sliderLeft_changed() {
-    qDebug() << "on slider left changed";
+void MainWindow::on_sliderLeft_changed(int value) {
+    qDebug() << "on slider left changed: " << value;
+    ui->frameCountLeft->setText(QString::number(value));
 }
 
-void MainWindow::on_sliderRight_changed() {
-    qDebug() << "on slider right changed";
+void MainWindow::on_sliderRight_changed(int value) {
+    qDebug() << "on slider right changed " << value;
+    ui->frameCountRight->setText(QString::number(value));
 }
 
-//void MainWindow::on_hyperLinkToolButton_clicked()
-//{
-//    hyperLinkWindow = new Player();
-//    hyperLinkWindow->showMinimized();
-//}
+void MainWindow::on_createNewHyperlink_clicked() {
+    qDebug() << "on button clicked";
 
-//void MainWindow::on_interactiveVideoPlayer_clicked()
-//{
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                         tr("Link label:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (ok && !text.isEmpty())
+        ui->selectLinks->addItem(text);
+        qDebug() << "Confirmed:" << text;
+}
 
-//}
+void MainWindow::on_selectLinks_changed(int index) {
+    qDebug() << "Link index selected: " << index;
+
+}

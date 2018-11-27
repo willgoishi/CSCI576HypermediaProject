@@ -30,7 +30,7 @@
      <attribute name="title">
       <string>HyperLink Tool</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="importPrimaryVideo">
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -56,7 +56,7 @@
        <string>Actions: </string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="importPrimaryVideo_2">
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -69,7 +69,7 @@
        <string>Import Secondary Video</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="createNewHyperLink">
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -95,20 +95,20 @@
        <string>Select Link:</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QComboBox" name="selectLinks">
       <property name="geometry">
        <rect>
         <x>330</x>
         <y>20</y>
-        <width>73</width>
+        <width>131</width>
         <height>22</height>
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_4">
+     <widget class="QPushButton" name="connectVideo">
       <property name="geometry">
        <rect>
-        <x>440</x>
+        <x>560</x>
         <y>20</y>
         <width>121</width>
         <height>28</height>
@@ -118,11 +118,11 @@
        <string>Connect Video</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_5">
+     <widget class="QPushButton" name="saveFile">
       <property name="geometry">
        <rect>
         <x>560</x>
-        <y>20</y>
+        <y>50</y>
         <width>111</width>
         <height>28</height>
        </rect>
@@ -157,7 +157,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="frameLabelLeft">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -170,7 +170,7 @@
        <string>Frame:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_4">
+     <widget class="QLabel" name="frameLabelRight">
       <property name="geometry">
        <rect>
         <x>370</x>
@@ -183,7 +183,7 @@
        <string>Frame: </string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_5">
+     <widget class="QLabel" name="frameCountLeft">
       <property name="geometry">
        <rect>
         <x>70</x>
@@ -196,7 +196,7 @@
        <string>0</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_6">
+     <widget class="QLabel" name="frameCountRight">
       <property name="geometry">
        <rect>
         <x>430</x>
