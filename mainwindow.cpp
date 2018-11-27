@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "myplayer.h"
+#include "mygraphicsview.h"
+
 
 #include <QMediaService>
 #include <QMediaPlaylist>
@@ -23,9 +25,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox->addItem("Dinosaur");
     ui->comboBox->addItem("Dinosaur2");
 
+    MyGraphicsView* view = new MyGraphicsView(this);
+    view->setGeometry(10, 180, 10 + 352, 180 + 288);
+    view->resize(352, 288);
+    this->layout()->addWidget(view);
+
     // Create players
-    MyPlayer* player1 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmOne.avi", 1);
-    this->layout()->addWidget(player1->m_videoWidget);
+//    MyPlayer* player1 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmOne.avi", 1);
+//    this->layout()->addWidget(player1->m_videoWidget);
 
     MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
     this->layout()->addWidget(player2->m_videoWidget);

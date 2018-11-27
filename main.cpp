@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     MainWindow mainWindow;
-    mainWindow.showMinimized();
+    mainWindow.show();
+//    mainWindow.showMinimized();
 
     return app.exec();
 }

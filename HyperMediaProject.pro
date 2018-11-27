@@ -30,15 +30,17 @@ SOURCES += \
         videowidget.cpp \
         playlistmodel.cpp \
         playercontrols.cpp \
+        mygraphicsview.cpp \
         player.cpp \
-    myplayer.cpp
+        myplayer.cpp
 HEADERS += \
         mainwindow.h \
         videowidget.h \
         playlistmodel.h \
         playercontrols.h \
+        mygraphicsview.h \
         player.h \
-    myplayer.h
+        myplayer.h
 FORMS += \
         mainwindow.ui
 
