@@ -1,176 +1,91 @@
+/****************************************************************************
+**
+** Copyright (C) 2017 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the examples of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:BSD$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of The Qt Company Ltd nor the names of its
+**     contributors may be used to endorse or promote products derived
+**     from this software without specific prior written permission.
+**
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "videowidget.h"
-#include "drawarea.h"
-#include "mywidget.h"
 
 #include <QKeyEvent>
 #include <QMouseEvent>
-#include <QDebug>
-#include <QPoint>
-#include <QRubberBand>
-#include <QVBoxLayout>
-#include <QPainter>
 
 VideoWidget::VideoWidget(QWidget *parent)
     : QVideoWidget(parent)
 {
-//    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-//    QPalette p = palette();
-//    p.setColor(QPalette::Window, Qt::black);
-//    setPalette(p);
+    QPalette p = palette();
+    p.setColor(QPalette::Window, Qt::black);
+    setPalette(p);
 
-//    setAttribute(Qt::WA_OpaquePaintEvent);
-
-    // Add drawarea
-
-
-//    drawArea = new DrawArea(this);
-//    drawArea->setGeometry(10, 180, 10 + 352, 180 + 288);
-//    drawArea->setStyleSheet("border:1px solid rgb(0, 255, 0);background-color: rgba(0, 0, 0, 0);");
-//    drawArea->resize(352, 288/2);
-//    this->layout()->addWidget(drawArea);
-
-//    QWidget* myWidget = new MyWidget;
-//    QGridLayout *layout = new QGridLayout;
-//    layout->addWidget(myWidget, 0, 0);
-
-//    parent->layout()->addWidget(m_myWidget);
-
-//    auto layout = new QVBoxLayout;
-//    layout->setSpacing(0);
-//    layout->setMargin(0);
-//    layout->addWidget(m_myWidget);
-//    this->setLayout(layout);
-
-    setAttribute(Qt::WA_StaticContents);
-
-    modified = false;
-    scribbling = false;
-    myPenWidth = 2;
-    myPenColor = Qt::blue;
-
+    setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
+void VideoWidget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape && isFullScreen()) {
+        setFullScreen(false);
+        event->accept();
+    } else if (event->key() == Qt::Key_Enter && event->modifiers() & Qt::Key_Alt) {
+        setFullScreen(!isFullScreen());
+        event->accept();
+    } else {
+        QVideoWidget::keyPressEvent(event);
+    }
+}
+
+void VideoWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    setFullScreen(!isFullScreen());
+    event->accept();
+}
 
 void VideoWidget::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << "DrawArea::mousePressEvent()";
-
-    if (event->button() == Qt::LeftButton) {
-        initPoint = event->pos();
-        lastPoint = event->pos();
-        scribbling = true;
-    }
-}
-
-void VideoWidget::mouseMoveEvent(QMouseEvent *event)
-{
-//    qDebug() << "mouseMoveEvent";
-
-    if ((event->buttons() & Qt::LeftButton) && scribbling)
-        clearImage();
-        drawRect(initPoint, event->pos());
-}
-
-void VideoWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-//    qDebug() << "mouseReleaseEvent";
-
-    if (event->button() == Qt::LeftButton && scribbling) {
-
-        QPoint startPoint = initPoint;
-        QPoint endPoint = event->pos();
-
-        int startX = startPoint.x();
-        int startY = startPoint.y();
-        int endX = endPoint.x();
-        int endY = endPoint.y();
-
-        qDebug() << "Draw Final Rect:";
-        qDebug() << "Start point: (" << startX << ", " << startY << ")";
-        qDebug() << "End point: (" << endX << ", " << endY << ")";
-
-        drawRect(initPoint, event->pos());
-        scribbling = false;
-    }
-}
-
-void VideoWidget::paintEvent(QPaintEvent *event)
-{
-    qDebug() << "paintEvent";
-
-    QPainter painter(this);
-    QRect dirtyRect = event->rect();
-    painter.drawImage(dirtyRect, image, dirtyRect);
-}
-
-
-void VideoWidget::resizeEvent(QResizeEvent *event)
-{
-    qDebug() << "resizeEvent";
-
-    if (width() > image.width() || height() > image.height()) {
-        int newWidth = qMax(width() + 128, image.width());
-        int newHeight = qMax(height() + 128, image.height());
-        resizeImage(&image, QSize(newWidth, newHeight));
-        update();
-    }
-    QWidget::resizeEvent(event);
-}
-
-void VideoWidget::clearImage()
-{
-    image.fill(qRgb(255, 255, 255));
-    modified = true;
-    update();
-}
-
-void VideoWidget::drawLineTo(const QPoint &endPoint)
-{
-    qDebug() << "drawLineTo";
-
-
-    QPainter painter(&image);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap,
-                        Qt::RoundJoin));
-    painter.drawLine(lastPoint, endPoint);
-    modified = true;
-
-    int rad = (myPenWidth / 2) + 2;
-    update(QRect(lastPoint, endPoint).normalized()
-                                     .adjusted(-rad, -rad, +rad, +rad));
-    lastPoint = endPoint;
-}
-
-
-void VideoWidget::drawRect(const QPoint &startPoint, const QPoint &endPoint)
-{
-    QPainter painter(&image);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap,
-                        Qt::RoundJoin));
-
-    // Draw rectangle
-    QRect rect = QRect(endPoint, startPoint);
-    painter.drawRect(rect);
-    painter.end();
-    update();
-
-    // Set vars
-    modified = true;
-    lastPoint = endPoint;
-}
-
-void VideoWidget::resizeImage(QImage *image, const QSize &newSize)
-{
-    qDebug() << "resizeImage";
-
-    if (image->size() == newSize)
-        return;
-
-    QImage newImage(newSize, QImage::Format_RGB32);
-    newImage.fill(qRgb(255, 255, 255));
-    QPainter painter(&newImage);
-    painter.drawImage(QPoint(0, 0), *image);
-    *image = newImage;
+    QVideoWidget::mousePressEvent(event);
 }
 

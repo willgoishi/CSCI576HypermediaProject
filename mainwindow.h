@@ -22,12 +22,13 @@ class QAudioProbe;
 QT_END_NAMESPACE
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -36,14 +37,8 @@ public:
 
 
 private slots:
-
-//    void on_hyperLinkToolButton_clicked();
-
-//    void on_interactiveVideoPlayer_clicked();
-
     void on_sliderLeft_changed();
     void on_sliderRight_changed();
-
 
 private:
     Ui::MainWindow *ui;

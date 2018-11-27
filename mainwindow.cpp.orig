@@ -2,6 +2,10 @@
 #include "ui_mainwindow.h"
 #include "myplayer.h"
 #include "mygraphicsview.h"
+<<<<<<< HEAD
+=======
+
+>>>>>>> rectangle
 
 #include <QMediaService>
 #include <QMediaPlaylist>
@@ -9,6 +13,8 @@
 #include <QAudioProbe>
 #include <QMediaMetaData>
 #include <QLabel>
+#include "drawarea.h"
+#include "mywidget.h"
 
 #include <QtWidgets>
 #include <QMediaPlayer>
@@ -30,25 +36,62 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox->addItem("Dinosaur");
     ui->comboBox->addItem("Dinosaur2");
 
-
-    MyGraphicsView* view = new MyGraphicsView(this);
-    view->setGeometry(10, 180, 10 + 352, 180 + 288);
+<<<<<<< HEAD
+//    QPainter painter(this);
+//    painter.setPen(QPen(Qt::blue, 2, Qt::SolidLine, Qt::RoundCap,
 //                        Qt::RoundJoin));
-    view->resize(352, 288);
-    this->layout()->addWidget(view);
+//    QRect rect = QRect(QPoint(10, 180), QPoint(10 + 50, 180 + 50));
+//    painter.drawRect(rect);
 
+    // Create left layout
+//    QWidget* m_myWidget = new QWidget;
+//    m_myWidget->setGeometry(0, 200, 200, 200);
+//    m_myWidget->setStyleSheet("background-color:black;");
+//    m_myWidget->show();
+//    this->layout()->addWidget(m_myWidget);
+
+
+//    this->layout()->addWidget(m_myWidget);
 
     MyGraphicsView* graphicsView = new MyGraphicsView(this);
     graphicsView->setGeometry(10, 180, 10 + 352, 180 + 288);
     graphicsView->resize(352, 288);
     this->layout()->addWidget(graphicsView);
 
+
+//    DrawArea* drawArea = new DrawArea;
+//    drawArea->setGeometry(10, 180, 10 + 352, 180 + 288);
+//    drawArea->setStyleSheet("border:1px solid rgb(0, 255, 0);background-color: rgba(0, 0, 0, 0);");
+//    drawArea->resize(352, 288/2);
+
+//    this->layout()->addWidget(drawArea);
+
+    // Create players
+//    MyPlayer* player1 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmOne.avi", 1);
+//    ui->gridLayout->addWidget(player1->m_videoWidget);
+//    this->layout()->addWidget(player1->m_videoWidget);
+
+//    QLabel* myLabel = new QLabel("My Label");
+//    QWidget* myWidget = new mywidget;
+//    myWidget->setGeometry(10, 180, 352, 288);
+//    this->layout()->addWidget(myWidget);
+
+//    ui->gridLayout->addWidget(myWidget, 0, 0);
+//    ui->gridLayout->addWidget(myLabel, 0, 0);
+=======
+    MyGraphicsView* view = new MyGraphicsView(this);
+    view->setGeometry(10, 180, 10 + 352, 180 + 288);
+    view->resize(352, 288);
+    this->layout()->addWidget(view);
+
     // Create players
 //    MyPlayer* player1 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmOne.avi", 1);
 //    this->layout()->addWidget(player1->m_videoWidget);
+>>>>>>> rectangle
 
-//    MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
-//    this->layout()->addWidget(player2->m_videoWidget);
+    MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
+    this->layout()->addWidget(player2->m_videoWidget);
+
 
     // Connect sliders to function
     connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed()));

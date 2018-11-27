@@ -25,15 +25,12 @@ protected:
 
 private:
        QRubberBand *rubberBand;
-
        QPoint start;
        QPoint end;
-
        QRect rect;
        QRect lastRect;
        QGraphicsScene *scene;
        QGraphicsRectItem *rectangle;
-
 };
 
 #endif // MYGRAPHICSVIEW_H

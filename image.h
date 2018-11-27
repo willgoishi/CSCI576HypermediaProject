@@ -4,9 +4,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <malloc.h>
+//#include <malloc.h>
 #include <memory.h>
-#include <tchar.h>
+//#include <tchar.h>
 #include <string.h>
 
 class Image
@@ -16,6 +16,7 @@ private:
     int		Height;					// Height of Image
     char	ImagePath[MAX_PATH];	// Image location
     char*	Data;					// RGB data of the image
+
 public:
     // Constructor
     Image();

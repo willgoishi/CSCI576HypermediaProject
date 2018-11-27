@@ -29,8 +29,6 @@ Image::Image( Image *otherImage)
     {
         Data[i]	= otherImage->Data[i];
     }
-
-
 }
 
 // = operator overload
@@ -47,7 +45,6 @@ Image & Image::operator= (const Image &otherImage)
     }
 
     return *this;
-
 }
 
 
@@ -109,7 +106,6 @@ bool Image::ReadImage()
     fclose(IN_FILE);
 
     return true;
-
 }
 
 
@@ -167,7 +163,6 @@ bool Image::WriteImage()
     fclose(OUT_FILE);
 
     return true;
-
 }
 
 // eg Filtering, Transformation, Cropping, etc.

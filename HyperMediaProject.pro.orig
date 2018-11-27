@@ -27,13 +27,27 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
+        videowidget.cpp \
+        playlistmodel.cpp \
+        playercontrols.cpp \
         mygraphicsview.cpp \
+        player.cpp \
+<<<<<<< HEAD
         image.cpp \
+=======
+>>>>>>> rectangle
         myplayer.cpp
 HEADERS += \
         mainwindow.h \
+        videowidget.h \
+        playlistmodel.h \
+        playercontrols.h \
         mygraphicsview.h \
+        player.h \
+<<<<<<< HEAD
         image.h \
+=======
+>>>>>>> rectangle
         myplayer.h
 FORMS += \
         mainwindow.ui
