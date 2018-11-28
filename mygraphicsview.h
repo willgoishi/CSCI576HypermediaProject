@@ -1,6 +1,8 @@
 #ifndef MYGRAPHICSVIEW_H
 #define MYGRAPHICSVIEW_H
 
+#include "mainwindow.h"
+
 #include <QObject>
 #include <QWidget>
 #include <QGraphicsView>
@@ -31,6 +33,11 @@ private:
        QRect lastRect;
        QGraphicsScene *scene;
        QGraphicsRectItem *rectangle;
+
+       // Lets us know where to store the rectangle info
+       int currentFrame = 0;
+       int currentLink = 0;
+       int currentVideo = 0;
 };
 
 #endif // MYGRAPHICSVIEW_H

@@ -1,5 +1,7 @@
+#include "mainwindow.h"
 #include "mygraphicsview.h"
 
+#include <QApplication>
 #include "QtDebug"
 
 MyGraphicsView::MyGraphicsView(QWidget *parent)
@@ -10,6 +12,7 @@ MyGraphicsView::MyGraphicsView(QWidget *parent)
 //    QPen pen(Qt::black);
 //    rectangle = scene->addRect(10, 10, 100, 100, pen);
 }
+
 
 void MyGraphicsView::mousePressEvent(QMouseEvent *ev)
 {
@@ -46,6 +49,9 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
     this->viewport()->update();
     rubberBand->hide();
 
+    // Set frame info
+
+
     QGraphicsView::mouseReleaseEvent(ev);
 }
 
@@ -67,3 +73,5 @@ void MyGraphicsView::debugCoord(QString name, QPoint point)
 {
     qDebug() << name << " point: (" << point.x() << ", " << point.y() << ")";
 }
+
+

@@ -28,21 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Add placeholder items to combox dropdown
     ui->selectLinks->addItem("Doctor");
     ui->selectLinks->addItem("Dinosaur");
-//    ui->selectLinks->addItem("Dinosaur2");
-
 
     // Slider
     ui->horizontalSliderLeft->setTickInterval(20);
     ui->horizontalSliderLeft->setSingleStep(1);
-
-    MyGraphicsView* view = new MyGraphicsView(this);
-    view->setGeometry(10, 180, 10 + 352, 180 + 288);
-//                        Qt::RoundJoin));
-    view->resize(352, 288);
-    this->layout()->addWidget(view);
-
-
-
 
     MyGraphicsView* graphicsView = new MyGraphicsView(this);
     graphicsView->setGeometry(10, 180, 10 + 352, 180 + 288);
@@ -55,6 +44,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
 //    this->layout()->addWidget(player2->m_videoWidget);
+
+    /*
+    Load frames from video, find frame count & create the vector of nodes (1 frame per node).
+
+    For now we create an empty
+    */
+
+
+
 
     // Connect sliders to function
     connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed(int)));

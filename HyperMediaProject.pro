@@ -29,12 +29,14 @@ SOURCES += \
         mainwindow.cpp \
         mygraphicsview.cpp \
         image.cpp \
-        myplayer.cpp
+        myplayer.cpp \
+    mynode.cpp
 HEADERS += \
         mainwindow.h \
         mygraphicsview.h \
         image.h \
-        myplayer.h
+        myplayer.h \
+    mynode.h
 FORMS += \
         mainwindow.ui
 
