@@ -3,8 +3,13 @@
 
 #include <QWidget>
 #include <QMediaPlayer>
-#include <QVideoWidget>
+//#include <QVideoWidget>
 #include <QString>
+#include <QColor>
+#include <QImage>
+#include <QPoint>
+#include <QMouseEvent>
+
 
 class MyPlayer :
     public QWidget
@@ -17,11 +22,11 @@ public:
 
 private slots:
     void import();
+protected:
 
 private:
     QMediaPlayer *m_player = nullptr;
-    std::vector<QImage*> PrimaryUploadImages;
-    std::vector<QImage*> SecondaryUploadImages;
+    std::vector<QImage*> Images;
 };
 
 #endif // MYPLAYER_H

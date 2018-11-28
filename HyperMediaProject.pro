@@ -32,7 +32,9 @@ SOURCES += \
         playercontrols.cpp \
         player.cpp \
         image.cpp \
-        myplayer.cpp
+        myplayer.cpp \
+        mygraphicsview.cpp \
+        mywidget.cpp
 HEADERS += \
         mainwindow.h \
         videowidget.h \
@@ -40,7 +42,10 @@ HEADERS += \
         playercontrols.h \
         player.h \
         image.h \
-        myplayer.h
+        myplayer.h \
+        mygraphicsview.h \
+        mywidget.h
+
 FORMS += \
         mainwindow.ui
 

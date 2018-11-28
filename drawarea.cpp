@@ -1,58 +1,28 @@
-#include "videowidget.h"
-#include "drawarea.h"
-#include "mywidget.h"
+#include "drawArea.h"
 
-#include <QKeyEvent>
-#include <QMouseEvent>
+#include <QtWidgets>
 #include <QDebug>
-#include <QPoint>
-#include <QRubberBand>
-#include <QVBoxLayout>
-#include <QPainter>
 
-VideoWidget::VideoWidget(QWidget *parent)
-    : QVideoWidget(parent)
+DrawArea::DrawArea(QWidget *parent)
+    : QWidget(parent)
 {
-//    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-
-//    QPalette p = palette();
-//    p.setColor(QPalette::Window, Qt::black);
-//    setPalette(p);
-
-//    setAttribute(Qt::WA_OpaquePaintEvent);
-
-    // Add drawarea
-
-
-//    drawArea = new DrawArea(this);
-//    drawArea->setGeometry(10, 180, 10 + 352, 180 + 288);
-//    drawArea->setStyleSheet("border:1px solid rgb(0, 255, 0);background-color: rgba(0, 0, 0, 0);");
-//    drawArea->resize(352, 288/2);
-//    this->layout()->addWidget(drawArea);
-
-//    QWidget* myWidget = new MyWidget;
-//    QGridLayout *layout = new QGridLayout;
-//    layout->addWidget(myWidget, 0, 0);
-
-//    parent->layout()->addWidget(m_myWidget);
-
-//    auto layout = new QVBoxLayout;
-//    layout->setSpacing(0);
-//    layout->setMargin(0);
-//    layout->addWidget(m_myWidget);
-//    this->setLayout(layout);
-
+    qDebug() << "drawarea.cpp";
     setAttribute(Qt::WA_StaticContents);
+//    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+//    setAttribute(Qt::WA_NoSystemBackground);
+//    setAttribute(Qt::WA_TranslucentBackground);
+//    setAttribute(Qt::WA_PaintOnScreen);
+//    setAttribute(Qt::WA_TransparentForMouseEvents);
+//    setStyleSheet("background-color: rgba(22,22,22,1)");
+//    setStyleSheet("border:1px solid rgb(0, 255, 0);");
 
     modified = false;
     scribbling = false;
     myPenWidth = 2;
     myPenColor = Qt::blue;
-
 }
 
-
-void VideoWidget::mousePressEvent(QMouseEvent *event)
+void DrawArea::mousePressEvent(QMouseEvent *event)
 {
     qDebug() << "DrawArea::mousePressEvent()";
 
@@ -63,7 +33,7 @@ void VideoWidget::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void VideoWidget::mouseMoveEvent(QMouseEvent *event)
+void DrawArea::mouseMoveEvent(QMouseEvent *event)
 {
 //    qDebug() << "mouseMoveEvent";
 
@@ -72,7 +42,7 @@ void VideoWidget::mouseMoveEvent(QMouseEvent *event)
         drawRect(initPoint, event->pos());
 }
 
-void VideoWidget::mouseReleaseEvent(QMouseEvent *event)
+void DrawArea::mouseReleaseEvent(QMouseEvent *event)
 {
 //    qDebug() << "mouseReleaseEvent";
 
@@ -95,9 +65,9 @@ void VideoWidget::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void VideoWidget::paintEvent(QPaintEvent *event)
+void DrawArea::paintEvent(QPaintEvent *event)
 {
-    qDebug() << "paintEvent";
+//    qDebug() << "paintEvent";
 
     QPainter painter(this);
     QRect dirtyRect = event->rect();
@@ -105,7 +75,7 @@ void VideoWidget::paintEvent(QPaintEvent *event)
 }
 
 
-void VideoWidget::resizeEvent(QResizeEvent *event)
+void DrawArea::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "resizeEvent";
 
@@ -118,14 +88,14 @@ void VideoWidget::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
 }
 
-void VideoWidget::clearImage()
+void DrawArea::clearImage()
 {
     image.fill(qRgb(255, 255, 255));
     modified = true;
     update();
 }
 
-void VideoWidget::drawLineTo(const QPoint &endPoint)
+void DrawArea::drawLineTo(const QPoint &endPoint)
 {
     qDebug() << "drawLineTo";
 
@@ -143,7 +113,7 @@ void VideoWidget::drawLineTo(const QPoint &endPoint)
 }
 
 
-void VideoWidget::drawRect(const QPoint &startPoint, const QPoint &endPoint)
+void DrawArea::drawRect(const QPoint &startPoint, const QPoint &endPoint)
 {
     QPainter painter(&image);
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap,
@@ -160,7 +130,7 @@ void VideoWidget::drawRect(const QPoint &startPoint, const QPoint &endPoint)
     lastPoint = endPoint;
 }
 
-void VideoWidget::resizeImage(QImage *image, const QSize &newSize)
+void DrawArea::resizeImage(QImage *image, const QSize &newSize)
 {
     qDebug() << "resizeImage";
 
@@ -173,4 +143,3 @@ void VideoWidget::resizeImage(QImage *image, const QSize &newSize)
     painter.drawImage(QPoint(0, 0), *image);
     *image = newImage;
 }
-

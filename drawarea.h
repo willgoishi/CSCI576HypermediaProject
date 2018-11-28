@@ -1,22 +1,17 @@
-#ifndef VIDEOWIDGET_H
-#define VIDEOWIDGET_H
+#ifndef DRAWAREA_H
+#define DRAWAREA_H
 
-//#include "drawarea.h"
-
-#include <QVideoWidget>
-#include <QRubberBand>
-#include <QPoint>
 #include <QColor>
 #include <QImage>
 #include <QPoint>
 #include <QWidget>
 
-class VideoWidget : public QVideoWidget
+class DrawArea : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit VideoWidget(QWidget *parent = nullptr);
+    DrawArea(QWidget *parent = nullptr);
     bool isModified() const { return modified; }
     QColor penColor() const { return myPenColor; }
     int penWidth() const { return myPenWidth; }
@@ -29,13 +24,13 @@ public slots:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
+
+protected:
+
 private:
     void drawLineTo(const QPoint &endPoint);
     void drawRect(const QPoint &startPoint, const QPoint &endPoint);
     void resizeImage(QImage *image, const QSize &newSize);
-
-    QRubberBand* rubberBand = nullptr;
-    QPoint origin;
 
     bool modified;
     bool scribbling;
@@ -46,4 +41,4 @@ private:
     QPoint lastPoint;
 };
 
-#endif // VIDEOWIDGET_H
+#endif

@@ -66,7 +66,7 @@ bool Image::ReadImage()
 
     // Create a valid output file pointer
     FILE *IN_FILE;
-    IN_FILE = fopen(ImagePath, "rb");
+    IN_FILE = fopen(ImagePath, "wb");
     if ( IN_FILE == nullptr)
     {
         fprintf(stderr, "Error Opening File for Reading");
