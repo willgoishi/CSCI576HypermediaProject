@@ -7,6 +7,7 @@
 #include <QApplication>
 
 #include "player.h"
+#include "myplayer.h"
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
@@ -36,14 +37,11 @@ public:
 
 
 private slots:
-
-//    void on_hyperLinkToolButton_clicked();
-
-//    void on_interactiveVideoPlayer_clicked();
-
     void on_sliderLeft_changed();
     void on_sliderRight_changed();
 
+    void on_importPrimaryButton_clicked();
+    void on_importSecondaryButton_clicked();
 
 private:
     Ui::MainWindow *ui;

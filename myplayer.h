@@ -15,8 +15,13 @@ public:
 
     QVideoWidget *m_videoWidget = nullptr;
 
+private slots:
+    void import();
+
 private:
     QMediaPlayer *m_player = nullptr;
+    std::vector<QImage*> PrimaryUploadImages;
+    std::vector<QImage*> SecondaryUploadImages;
 };
 
 #endif // MYPLAYER_H

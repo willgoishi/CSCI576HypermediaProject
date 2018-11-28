@@ -34,6 +34,23 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed()));
     connect(ui->horizontalSliderRight, SIGNAL(valueChanged(int)), this, SLOT(on_sliderRight_changed()));
 
+    connect(ui->importPrimaryButton, SIGNAL(clicked()), player1, SLOT(import()));
+    connect(ui->importSecondaryButton, SIGNAL(clicked()), player2, SLOT(import()));
+
+
+    /*
+     *Needs to be placed in the correct function
+     *
+     *Example Code
+     *
+     * QGraphicsScene* scene = new QGraphicsScene();
+    QGraphicsView* view = new QGraphicsView(scene);
+    QGraphicsPixmapItem* image = new QGraphicsPixmapItem(QPixmap::fromImage("QImage will go here"));
+
+    scene->addItem(image);
+    view->show();*/
+
+
 }
 
 MainWindow::~MainWindow()
@@ -49,13 +66,12 @@ void MainWindow::on_sliderRight_changed() {
     qDebug() << "on slider right changed";
 }
 
-//void MainWindow::on_hyperLinkToolButton_clicked()
-//{
-//    hyperLinkWindow = new Player();
-//    hyperLinkWindow->showMinimized();
-//}
+void MainWindow::on_importPrimaryButton_clicked()
+{
+    qDebug() << "import primary";
+}
 
-//void MainWindow::on_interactiveVideoPlayer_clicked()
-//{
-
-//}
+void MainWindow::on_importSecondaryButton_clicked()
+{
+    qDebug() << "import secondary";
+}
