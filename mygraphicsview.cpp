@@ -1,18 +1,19 @@
 #include "mainwindow.h"
 #include "mygraphicsview.h"
+#include "myframe.h"
+#include "myvideo.h"
 
 #include <QApplication>
 #include "QtDebug"
+#include "QVector"
 
-MyGraphicsView::MyGraphicsView(QWidget *parent)
-    : QGraphicsView (parent), rubberBand(nullptr)
+MyGraphicsView::MyGraphicsView(MyPlaylist myPlaylist, int videoId, QWidget *parent)
+    : QGraphicsView (parent),
+      rubberBand(nullptr)
 {
-//    scene = new QGraphicsScene(this);
-//    this->setScene(scene);
-//    QPen pen(Qt::black);
-//    rectangle = scene->addRect(10, 10, 100, 100, pen);
+    this->myPlaylist = myPlaylist;
+    this->currentVideoId = videoId;
 }
-
 
 void MyGraphicsView::mousePressEvent(QMouseEvent *ev)
 {
@@ -44,14 +45,25 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
 {
     qDebug() << "mouseReleaseEvent";
 
-    rect = QRect(start, end).normalized();
-//    update();
-    this->viewport()->update();
-    rubberBand->hide();
+    QPoint releasePoint = ev->pos();
 
-    // Set frame info
+    if (releasePoint == start) {
 
+        clearBoundary();
 
+    } else {
+
+        rect = QRect(start, end).normalized();
+        this->viewport()->update();
+        rubberBand->hide();
+
+        qDebug() << "Add Rectangle to vector";
+
+        MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
+
+        video.addBoundary(currentFrame, currentLinkId, rect);
+
+    }
     QGraphicsView::mouseReleaseEvent(ev);
 }
 
@@ -73,5 +85,44 @@ void MyGraphicsView::debugCoord(QString name, QPoint point)
 {
     qDebug() << name << " point: (" << point.x() << ", " << point.y() << ")";
 }
+
+void MyGraphicsView::updateBoundary(int frameId)
+{
+    currentFrame = frameId;
+
+    qDebug() << "Update boundary";
+
+    clearBoundary();
+
+//    // Check if boundary exists for current frame
+//    MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
+
+//    qDebug() << "updateBoundary(), frame =" << currentFrame;
+
+//    MyFrame* frame = video.getFrame(currentFrame);
+
+//    qDebug() << "currentLinkId: " << currentLinkId;
+
+//    if (frame->hasBoundary(currentLinkId)) {
+//        qDebug() << "Current frame has boundary";
+//    } else {
+//        qDebug() << "Current frame has no boundary";
+//    }
+}
+
+void MyGraphicsView::clearBoundary()
+{
+    qDebug() << "Clear Rectangle!";
+    rect = QRect();
+
+    qDebug() << "Clear Rectangle 1";
+
+    this->viewport()->update();
+
+    qDebug() << "Clear Rectangle 2";
+
+    rubberBand->hide();
+}
+
 
 

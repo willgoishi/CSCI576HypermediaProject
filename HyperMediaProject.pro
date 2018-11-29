@@ -25,18 +25,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-        mygraphicsview.cpp \
-        image.cpp \
-        myplayer.cpp \
-    mynode.cpp
+    main.cpp \
+    mainwindow.cpp \
+    mygraphicsview.cpp \
+    image.cpp \
+    myplayer.cpp \
+    myvideo.cpp \
+    myframe.cpp \
+    myplaylist.cpp
 HEADERS += \
-        mainwindow.h \
-        mygraphicsview.h \
-        image.h \
-        myplayer.h \
-    mynode.h
+    mainwindow.h \
+    mygraphicsview.h \
+    image.h \
+    myplayer.h \
+    myframe.h \
+    myvideo.h \
+    myplaylist.h
 FORMS += \
         mainwindow.ui
 

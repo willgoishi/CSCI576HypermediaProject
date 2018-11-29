@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "mygraphicsview.h"
+
 #include <QMainWindow>
 #include <QWidget>
 #include <QMediaPlayer>
@@ -18,6 +20,7 @@ class QVideoProbe;
 class QVideoWidget;
 class QAudioProbe;
 QT_END_NAMESPACE
+
 
 namespace Ui {
     class MainWindow;
@@ -40,7 +43,15 @@ private slots:
     void on_selectLinks_changed(int);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
+    MyGraphicsView* graphicsViewPrimary;
+    MyGraphicsView* graphicsViewSecondary;
+
+    int currentLinkId = 0;
+    int currentPrimaryFrame = 0;    // Frame for left video
+    int currentSecondaryFrame = 0;  // Frame for right video
+    int primaryVideoId = 0;         // Id of
+    int secondaryVideoId = 0;
 };
 
 #endif // MAINWINDOW_H

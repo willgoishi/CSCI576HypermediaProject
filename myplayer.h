@@ -24,7 +24,6 @@ protected:
 
 private:
     QMediaPlayer *m_player = nullptr;
-
 };
 
 #endif // MYPLAYER_H

@@ -1,8 +1,11 @@
 #ifndef MYGRAPHICSVIEW_H
 #define MYGRAPHICSVIEW_H
 
-#include "mainwindow.h"
+#include "myframe.h"
+#include "myvideo.h"
+#include "myplaylist.h"
 
+#include <QVector>
 #include <QObject>
 #include <QWidget>
 #include <QGraphicsView>
@@ -16,7 +19,9 @@ class MyGraphicsView : public QGraphicsView
     Q_OBJECT
 
 public:
-    explicit MyGraphicsView(QWidget *parent = nullptr);
+    explicit MyGraphicsView(MyPlaylist myPlaylist, int videoId, QWidget *parent = nullptr);
+    void updateBoundary(int frame);
+    void clearBoundary();
 
 protected:
     void mouseMoveEvent(QMouseEvent *ev);
@@ -33,11 +38,13 @@ private:
        QRect lastRect;
        QGraphicsScene *scene;
        QGraphicsRectItem *rectangle;
+       MyVideo myVideo;
+       MyPlaylist myPlaylist;
 
        // Lets us know where to store the rectangle info
        int currentFrame = 0;
-       int currentLink = 0;
-       int currentVideo = 0;
+       int currentLinkId = 0;
+       int currentVideoId = 0;
 };
 
 #endif // MYGRAPHICSVIEW_H

@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "myplayer.h"
+#include "myframe.h"
+#include "myvideo.h"
 #include "mygraphicsview.h"
+#include "myplaylist.h"
 
+#include <QVector>
 #include <QMediaService>
 #include <QMediaPlaylist>
 #include <QVideoProbe>
@@ -30,13 +33,47 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->selectLinks->addItem("Dinosaur");
 
     // Slider
-    ui->horizontalSliderLeft->setTickInterval(20);
+//    ui->horizontalSliderLeft->setTickInterval(1);
     ui->horizontalSliderLeft->setSingleStep(1);
+    ui->horizontalSliderLeft->setMaximum(100);
 
-    MyGraphicsView* graphicsView = new MyGraphicsView(this);
-    graphicsView->setGeometry(10, 180, 10 + 352, 180 + 288);
-    graphicsView->resize(352, 288);
-    this->layout()->addWidget(graphicsView);
+
+    // Create playlist to hold all the videos
+    MyPlaylist playlist;
+
+    int totalFrames = 100;
+
+    // Create a video
+    MyVideo video;
+
+    // Generate frames for video
+    for (int i = 0; i < totalFrames; i++) {
+
+        // Constructor for video
+        int frameCount = i;
+        int videoId = 0;
+        int linkId = 0;
+        QRect boundary = QRect();
+
+        // Create node & append
+        MyFrame* frame = new MyFrame(frameCount);
+        video.addFrame(frame);
+    }
+
+    playlist.addVideo(video);
+
+
+    // Left video
+    graphicsViewPrimary = new MyGraphicsView(playlist, 0, this);
+    graphicsViewPrimary->setGeometry(10, 180, 10 + 352, 180 + 288);
+    graphicsViewPrimary->resize(352, 288);
+    this->layout()->addWidget(graphicsViewPrimary);
+
+    // Right video
+    graphicsViewSecondary = new MyGraphicsView(playlist, 1, this);
+    graphicsViewSecondary->setGeometry(370, 180, 370 + 352, 180 + 288);
+    graphicsViewSecondary->resize(352, 288);
+    this->layout()->addWidget(graphicsViewSecondary);
 
     // Create players
 //    MyPlayer* player1 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmOne.avi", 1);
@@ -44,15 +81,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
 //    this->layout()->addWidget(player2->m_videoWidget);
-
-    /*
-    Load frames from video, find frame count & create the vector of nodes (1 frame per node).
-
-    For now we create an empty
-    */
-
-
-
 
     // Connect sliders to function
     connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed(int)));
@@ -69,13 +97,17 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_sliderLeft_changed(int value) {
-    qDebug() << "on slider left changed: " << value;
+    qDebug() << "currentPrimaryFrame = " << value;
     ui->frameCountLeft->setText(QString::number(value));
+    currentPrimaryFrame = value;
+    graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
 }
 
 void MainWindow::on_sliderRight_changed(int value) {
-    qDebug() << "on slider right changed " << value;
+    qDebug() << "currentSecondaryFrame = " << value;
     ui->frameCountRight->setText(QString::number(value));
+    currentSecondaryFrame = value;
+    graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
 }
 
 void MainWindow::on_createNewHyperlink_clicked() {
@@ -91,6 +123,7 @@ void MainWindow::on_createNewHyperlink_clicked() {
 }
 
 void MainWindow::on_selectLinks_changed(int index) {
-    qDebug() << "Link index selected: " << index;
+    currentLinkId = index;
 
+    qDebug() << "Link index selected: " << index;
 }
