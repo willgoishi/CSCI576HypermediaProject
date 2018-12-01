@@ -8,6 +8,7 @@
 
 #include "player.h"
 #include "myplayer.h"
+#include "mygraphicsview.h"
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
@@ -37,14 +38,17 @@ public:
 
 
 private slots:
+    void import();
     void on_sliderLeft_changed();
     void on_sliderRight_changed();
 
-    void on_importPrimaryButton_clicked();
-    void on_importSecondaryButton_clicked();
-
 private:
     Ui::MainWindow *ui;
+    MyGraphicsView* graphicsView;
+    MyGraphicsView* graphicsView2;
+    std::vector<QImage*> PrimaryUploadImages;
+    std::vector<QImage*> SecondaryUploadImages;
+    QImage imageQ;
 };
 
 #endif // MAINWINDOW_H

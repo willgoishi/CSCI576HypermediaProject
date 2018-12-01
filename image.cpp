@@ -22,15 +22,13 @@ Image::Image( Image *otherImage)
 {
     Height = otherImage->Height;
     Width  = otherImage->Width;
-    Data   = new char[Width*Height*4];
+    Data   = new char[Width*Height*3];
     strcpy(otherImage->ImagePath, ImagePath );
 
-    for ( int i=0; i<(Height*Width*4); i++ )
+    for ( int i=0; i<(Height*Width*3); i++ )
     {
         Data[i]	= otherImage->Data[i];
     }
-
-
 }
 
 // = operator overload
@@ -38,10 +36,10 @@ Image & Image::operator= (const Image &otherImage)
 {
     Height = otherImage.Height;
     Width  = otherImage.Width;
-    Data   = new char[Width*Height*4];
+    Data   = new char[Width*Height*3];
     strcpy( (char *)otherImage.ImagePath, ImagePath );
 
-    for ( int i=0; i<(Height*Width*4); i++ )
+    for ( int i=0; i<(Height*Width*3); i++ )
     {
         Data[i]	= otherImage.Data[i];
     }
@@ -66,7 +64,7 @@ bool Image::ReadImage()
 
     // Create a valid output file pointer
     FILE *IN_FILE;
-    IN_FILE = fopen(ImagePath, "wb");
+    IN_FILE = fopen(ImagePath, "rb");
     if ( IN_FILE == nullptr)
     {
         fprintf(stderr, "Error Opening File for Reading");
@@ -93,13 +91,14 @@ bool Image::ReadImage()
     }
 
     // Allocate Data structure and copy
-    Data = new char[Width*Height*4];
+    Data = new char[Width*Height*3];
     for (i = 0; i < Height*Width; i++)
     {
         Data[3 * i] = Bbuf[i];
         Data[3 * i + 1] = Gbuf[i];
         Data[3 * i + 2] = Rbuf[i];
-        Data[3 * i + 3] = 1;
+        //Data[3 * i + 3] = 1;
+
     }
 
     // Clean up and return

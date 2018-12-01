@@ -5,8 +5,9 @@
 MyGraphicsView::MyGraphicsView(QWidget *parent)
     : QGraphicsView (parent), rubberBand(nullptr)
 {
-//    scene = new QGraphicsScene(this);
-//    this->setScene(scene);
+    scene = new QGraphicsScene(this);
+    this->setScene(scene);
+
 //    QPen pen(Qt::black);
 //    rectangle = scene->addRect(10, 10, 100, 100, pen);
 }

@@ -11,6 +11,7 @@
 #include <QLabel>
 #include "drawarea.h"
 #include "mywidget.h"
+#include "image.h"
 
 #include <QtWidgets>
 #include <QMediaPlayer>
@@ -48,11 +49,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    this->layout()->addWidget(m_myWidget);
 
-    MyGraphicsView* graphicsView = new MyGraphicsView(this);
+    graphicsView = new MyGraphicsView(this);
     graphicsView->setGeometry(10, 180, 10 + 352, 180 + 288);
     graphicsView->resize(352, 288);
     this->layout()->addWidget(graphicsView);
 
+
+    graphicsView2 = new MyGraphicsView(this);
+    graphicsView2->setGeometry(352 + 20, 180, 10 + 352, 180 + 288);
+    graphicsView2->resize(352, 288);
+    this->layout()->addWidget(graphicsView2);
 
 //    DrawArea* drawArea = new DrawArea;
 //    drawArea->setGeometry(10, 180, 10 + 352, 180 + 288);
@@ -74,16 +80,16 @@ MainWindow::MainWindow(QWidget *parent) :
 //    ui->gridLayout->addWidget(myWidget, 0, 0);
 //    ui->gridLayout->addWidget(myLabel, 0, 0);
 
-    MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
-    this->layout()->addWidget(player2->m_videoWidget);
+    //MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
+    //this->layout()->addWidget(player2->m_videoWidget);
 
 
     // Connect sliders to function
     connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed()));
     connect(ui->horizontalSliderRight, SIGNAL(valueChanged(int)), this, SLOT(on_sliderRight_changed()));
 
-    connect(ui->importPrimaryButton, SIGNAL(clicked()), player1, SLOT(import()));
-    connect(ui->importSecondaryButton, SIGNAL(clicked()), player2, SLOT(import()));
+    connect(ui->importPrimaryButton, SIGNAL(clicked()), this, SLOT(import()));
+    connect(ui->importSecondaryButton, SIGNAL(clicked()), this, SLOT(import()));
     resize(960, 640);
 }
 
@@ -92,20 +98,74 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_sliderLeft_changed() {
+void MainWindow::on_sliderLeft_changed()
+{
     qDebug() << "on slider left changed";
+    if(PrimaryUploadImages.size() == 0) { return; }
+
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(*PrimaryUploadImages.at(ui->horizontalSliderLeft->value())));
+    graphicsView->scene->addItem(item);
+    ui->left_sliderLabel->setText(QString::number(ui->horizontalSliderLeft->value()));
 }
 
 void MainWindow::on_sliderRight_changed() {
     qDebug() << "on slider right changed";
+    if(SecondaryUploadImages.size() == 0) { return; }
+
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(*SecondaryUploadImages.at(ui->horizontalSliderRight->value())));
+    graphicsView2->scene->addItem(item);
+    ui->right_sliderLabel->setText(QString::number(ui->horizontalSliderRight->value()));
 }
 
-void MainWindow::on_importPrimaryButton_clicked()
+void MainWindow::import()
 {
-    qDebug() << "import primary";
-}
+    QFileDialog upload(this);
+    upload.setFileMode(QFileDialog::Directory);
+    upload.setAcceptMode(QFileDialog::AcceptOpen);
+    upload.setWindowTitle("Import Files");
+    upload.exec();
 
-void MainWindow::on_importSecondaryButton_clicked()
-{
-    qDebug() << "import secondary";
+    std::string directoryPath = upload.directory().path().toStdString();
+    QDir directory(upload.directory().path());
+    QStringList imageFileNames = directory.entryList(QStringList() << "*.rgb", QDir::Files);
+
+    int count = 0;
+
+    QString caller = QObject::sender()->objectName();
+    qDebug() << caller;
+    foreach(QString filename, imageFileNames)
+    {
+        if(count > 200)
+        {
+            continue;
+        }
+
+        QString filePath = upload.directory().path() + "/" + filename;
+        QFile file(filePath);
+        if(!file.open(QFile::ReadOnly))
+        {
+            qDebug() << "Issue occurred in opening the file";
+            return;
+        }
+
+        QByteArray data = file.readAll();
+        file.flush();
+        file.close();
+
+        QImage img(352,288,QImage::Format_RGB32);
+        QRgb *pixels = reinterpret_cast<QRgb*>(img.bits());
+        for(size_t i = 0; i < 352*288; i++)
+        {
+            uchar pixel1 = data[i];
+            uchar pixel2 = data[i+1];
+            uchar pixel3 = data[i+2];
+            pixels[i] = qRgb(pixel1,pixel2,pixel3);
+        }
+
+        caller == "importPrimaryButton" ? PrimaryUploadImages.push_back(new QImage(img)) : SecondaryUploadImages.push_back(new QImage(img));
+        count++;
+    }
+    qDebug() << PrimaryUploadImages.size();
+    qDebug() << SecondaryUploadImages.size();
+    qDebug() << "DONE Loading!";
 }

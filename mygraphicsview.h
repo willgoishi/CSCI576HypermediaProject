@@ -15,6 +15,7 @@ class MyGraphicsView : public QGraphicsView
 
 public:
     explicit MyGraphicsView(QWidget *parent = nullptr);
+           QGraphicsScene *scene;
 
 protected:
     void mouseMoveEvent(QMouseEvent *ev);
@@ -31,7 +32,7 @@ private:
 
        QRect rect;
        QRect lastRect;
-       QGraphicsScene *scene;
+       //QGraphicsScene *scene;
        QGraphicsRectItem *rectangle;
 
 };
