@@ -22,6 +22,7 @@ public:
     explicit MyGraphicsView(MyPlaylist myPlaylist, int videoId, QWidget *parent = nullptr);
     void updateBoundary(int frame);
     void clearBoundary();
+    void showBoundary(QRect boundary);
 
 protected:
     void mouseMoveEvent(QMouseEvent *ev);

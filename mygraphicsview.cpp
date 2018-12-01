@@ -54,8 +54,9 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
     } else {
 
         rect = QRect(start, end).normalized();
-        this->viewport()->update();
+//        this->viewport()->update();
         rubberBand->hide();
+        showBoundary(rect);
 
         qDebug() << "Add Rectangle to vector";
 
@@ -72,13 +73,8 @@ void MyGraphicsView::paintEvent(QPaintEvent *ev)
     qDebug() << "paintEvent";
     QGraphicsView::paintEvent(ev);
 
-    QPainter painter(this->viewport());
-    painter.setPen(QPen(Qt::blue, 2, Qt::SolidLine, Qt::SquareCap,
-                        Qt::RoundJoin));
-
-    if (!rect.isNull())
-        painter.drawRect(rect);
-        update();
+//    if (!rect.isNull())
+//        showBoundary(rect);
 }
 
 void MyGraphicsView::debugCoord(QString name, QPoint point)
@@ -94,34 +90,58 @@ void MyGraphicsView::updateBoundary(int frameId)
 
     clearBoundary();
 
-//    // Check if boundary exists for current frame
-//    MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
+    // Check if boundary exists for current frame
+    MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
 
-//    qDebug() << "updateBoundary(), frame =" << currentFrame;
+    qDebug() << "updateBoundary(), frame =" << currentFrame;
 
-//    MyFrame* frame = video.getFrame(currentFrame);
+    MyFrame* frame = video.getFrame(currentFrame);
 
-//    qDebug() << "currentLinkId: " << currentLinkId;
+    qDebug() << "currentLinkId: " << currentLinkId;
 
-//    if (frame->hasBoundary(currentLinkId)) {
-//        qDebug() << "Current frame has boundary";
-//    } else {
-//        qDebug() << "Current frame has no boundary";
-//    }
+    if (frame->hasBoundary(currentLinkId)) {
+        qDebug() << "Current frame has boundary";
+
+        QRect boundary = frame->getBoundary(currentLinkId);
+
+        qDebug() << "Boundary" << boundary.topLeft().x();
+        qDebug() << "Boundary" << boundary.topLeft().y();
+        qDebug() << "Boundary" << boundary.bottomLeft().x();
+        qDebug() << "Boundary" << boundary.bottomLeft().y();
+
+
+        showBoundary(frame->getBoundary(currentLinkId));
+
+    } else {
+        qDebug() << "Current frame has no boundary";
+    }
 }
 
 void MyGraphicsView::clearBoundary()
 {
     qDebug() << "Clear Rectangle!";
+
+    scene = new QGraphicsScene(this);
+    this->setScene(scene);
+
     rect = QRect();
-
-    qDebug() << "Clear Rectangle 1";
-
     this->viewport()->update();
+    if(rubberBand) {
+        rubberBand->hide();
+    }
+}
 
-    qDebug() << "Clear Rectangle 2";
+void MyGraphicsView::showBoundary(QRect boundary)
+{
+    scene = new QGraphicsScene(this);
+    this->setScene(scene);
+    scene->addRect(boundary);
 
-    rubberBand->hide();
+//    QPainter painter(this->viewport());
+//    painter.setPen(QPen(Qt::blue, 2, Qt::SolidLine, Qt::SquareCap,
+//                        Qt::RoundJoin));
+//    painter.drawRect(boundary);
+//    update();
 }
 
 

@@ -14,6 +14,7 @@ public:
 
     void addBoundary(int linkId, QRect boundary);
     bool hasBoundary(int linkId);
+    QRect getBoundary(int linkId);
 
 private:
     int frameCount;

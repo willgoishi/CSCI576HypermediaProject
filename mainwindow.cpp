@@ -64,8 +64,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Left video
+    int width = 352;
+    height = 288;
     graphicsViewPrimary = new MyGraphicsView(playlist, 0, this);
     graphicsViewPrimary->setGeometry(10, 180, 10 + 352, 180 + 288);
+//    graphicsViewPrimary->fitInView(0, 0, 352, 288, Qt::KeepAspectRatio);
+    graphicsViewPrimary->setFixedSize(width, height);
+    graphicsViewPrimary->setSceneRect(0, 0, width, height);
+    graphicsViewPrimary->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphicsViewPrimary->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsViewPrimary->resize(352, 288);
     this->layout()->addWidget(graphicsViewPrimary);
 

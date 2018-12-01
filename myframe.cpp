@@ -21,6 +21,11 @@ bool MyFrame::hasBoundary(int linkId)
     return links.contains(linkId);
 }
 
+QRect MyFrame::getBoundary(int linkId)
+{
+    return links[linkId];
+}
+
 
 MyFrame::MyFrame(int frameCount, int videoId, int linkId, QRect boundary)
 {
