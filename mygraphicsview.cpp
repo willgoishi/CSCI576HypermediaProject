@@ -7,16 +7,23 @@
 #include "QtDebug"
 #include "QVector"
 
-MyGraphicsView::MyGraphicsView(MyPlaylist myPlaylist, int videoId, QWidget *parent)
+MyGraphicsView::MyGraphicsView(MyPlaylist myPlaylist, int graphicsLocation, int videoId, QWidget *parent)
     : QGraphicsView (parent),
       rubberBand(nullptr)
 {
     this->myPlaylist = myPlaylist;
     this->currentVideoId = videoId;
+    this->graphicsLocation = graphicsLocation;
+    this->linkColorMap.insert(0, QColor(Qt::red));
+    this->linkColorMap.insert(1, QColor(Qt::blue));
 }
 
 void MyGraphicsView::mousePressEvent(QMouseEvent *ev)
 {
+    if (graphicsLocation == SECONDARY_LOCATION) {
+        return;
+    }
+
     start = ev->pos();
 
     debugCoord("Start", start);
@@ -32,6 +39,10 @@ void MyGraphicsView::mousePressEvent(QMouseEvent *ev)
 
 void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev)
 {
+    if (graphicsLocation == SECONDARY_LOCATION) {
+        return;
+    }
+
     end = ev->pos();
     debugCoord("End", end);
 
@@ -43,34 +54,46 @@ void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev)
 
 void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
 {
+    if (graphicsLocation == SECONDARY_LOCATION) {
+        return;
+    }
+
     qDebug() << "mouseReleaseEvent";
 
     QPoint releasePoint = ev->pos();
 
     if (releasePoint == start) {
 
-        clearBoundary();
+        // Delete boundary
+        MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
+        MyFrame* frame = video.getFrame(currentFrame);
+        frame->removeBoundary(currentLinkId);
+        updateBoundary(currentFrame);
 
     } else {
 
-        rect = QRect(start, end).normalized();
+        rect = QRectF(start, end).normalized();
 //        this->viewport()->update();
         rubberBand->hide();
-        showBoundary(rect);
+//        showBoundary(new QGraphicsRectItem(rect), this->currentLinkId);
 
-        qDebug() << "Add Rectangle to vector";
+        qDebug() << "Add Rectangle to vector: linkID: " << this->currentLinkId;
 
         MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
-
-        video.addBoundary(currentFrame, currentLinkId, rect);
-
+        QGraphicsRectItem* boundary = new QGraphicsRectItem(rect);
+        video.addBoundary(currentFrame, currentLinkId, boundary);
+        updateBoundary(currentFrame);
     }
     QGraphicsView::mouseReleaseEvent(ev);
 }
 
 void MyGraphicsView::paintEvent(QPaintEvent *ev)
 {
-    qDebug() << "paintEvent";
+    if (graphicsLocation == SECONDARY_LOCATION) {
+        return;
+    }
+
+//    qDebug() << "paintEvent";
     QGraphicsView::paintEvent(ev);
 
 //    if (!rect.isNull())
@@ -79,7 +102,7 @@ void MyGraphicsView::paintEvent(QPaintEvent *ev)
 
 void MyGraphicsView::debugCoord(QString name, QPoint point)
 {
-    qDebug() << name << " point: (" << point.x() << ", " << point.y() << ")";
+//    qDebug() << name << " point: (" << point.x() << ", " << point.y() << ")";
 }
 
 void MyGraphicsView::updateBoundary(int frameId)
@@ -91,7 +114,7 @@ void MyGraphicsView::updateBoundary(int frameId)
     clearBoundary();
 
     // Check if boundary exists for current frame
-    MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
+    video = myPlaylist.getActiveVideo(currentVideoId);
 
     qDebug() << "updateBoundary(), frame =" << currentFrame;
 
@@ -99,21 +122,19 @@ void MyGraphicsView::updateBoundary(int frameId)
 
     qDebug() << "currentLinkId: " << currentLinkId;
 
-    if (frame->hasBoundary(currentLinkId)) {
-        qDebug() << "Current frame has boundary";
+    // Loop for each link
+    QMapIterator<int, QGraphicsRectItem*> i(frame->getLinks());
 
-        QRect boundary = frame->getBoundary(currentLinkId);
+    while(i.hasNext()) {
+        i.next();
+        qDebug() << i.key() << ": " << i.value()->rect();
 
-        qDebug() << "Boundary" << boundary.topLeft().x();
-        qDebug() << "Boundary" << boundary.topLeft().y();
-        qDebug() << "Boundary" << boundary.bottomLeft().x();
-        qDebug() << "Boundary" << boundary.bottomLeft().y();
+        int linkId = i.key();
 
-
-        showBoundary(frame->getBoundary(currentLinkId));
-
-    } else {
-        qDebug() << "Current frame has no boundary";
+        if (frame->hasBoundary(linkId)) {
+            QGraphicsRectItem* boundary = frame->getBoundary(linkId);
+            showBoundary(frame->getBoundary(linkId), linkId);
+        }
     }
 }
 
@@ -123,25 +144,36 @@ void MyGraphicsView::clearBoundary()
 
     scene = new QGraphicsScene(this);
     this->setScene(scene);
-
-    rect = QRect();
     this->viewport()->update();
+
+
+//    updateBoundary(currentLinkId);
+
     if(rubberBand) {
         rubberBand->hide();
     }
 }
 
-void MyGraphicsView::showBoundary(QRect boundary)
+void MyGraphicsView::showBoundary(QGraphicsRectItem* boundary, int linkId)
 {
-    scene = new QGraphicsScene(this);
+    if (!scene) {
+        scene = new QGraphicsScene(this);
+    }
     this->setScene(scene);
-    scene->addRect(boundary);
+    scene->addRect(boundary->rect(), QPen(linkColorMap[linkId]));
 
-//    QPainter painter(this->viewport());
-//    painter.setPen(QPen(Qt::blue, 2, Qt::SolidLine, Qt::SquareCap,
-//                        Qt::RoundJoin));
-//    painter.drawRect(boundary);
-//    update();
+    QList<QGraphicsItem *> items = scene->items();
+
+    foreach(QGraphicsItem *item, items) {
+        qDebug() << "Item!";
+    }
+}
+
+void MyGraphicsView::updateCurrentLink(int linkId)
+{
+    currentLinkId = linkId;
+
+    qDebug() << "Current link updated to: " << currentLinkId;
 }
 
 

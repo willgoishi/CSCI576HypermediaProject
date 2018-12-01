@@ -41,10 +41,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Create playlist to hold all the videos
     MyPlaylist playlist;
 
-    int totalFrames = 100;
+    int totalFrames = 101;
+
 
     // Create a video
-    MyVideo video;
+    MyVideo primaryVideo;
 
     // Generate frames for video
     for (int i = 0; i < totalFrames; i++) {
@@ -57,16 +58,36 @@ MainWindow::MainWindow(QWidget *parent) :
 
         // Create node & append
         MyFrame* frame = new MyFrame(frameCount);
-        video.addFrame(frame);
+        primaryVideo.addFrame(frame);
     }
 
-    playlist.addVideo(video);
+    playlist.addVideo(primaryVideo);
+
+
+    // Create a video
+    MyVideo secondaryVideo;
+
+    // Generate frames for video
+    for (int i = 0; i < totalFrames; i++) {
+
+        // Constructor for video
+        int frameCount = i;
+        int videoId = 0;
+        int linkId = 0;
+        QRect boundary = QRect();
+
+        // Create node & append
+        MyFrame* frame = new MyFrame(frameCount);
+        primaryVideo.addFrame(frame);
+    }
+
+    playlist.addVideo(secondaryVideo);
 
 
     // Left video
     int width = 352;
-    height = 288;
-    graphicsViewPrimary = new MyGraphicsView(playlist, 0, this);
+    int height = 288;
+    graphicsViewPrimary = new MyGraphicsView(playlist, PRIMARY_LOCATION, 0, this);
     graphicsViewPrimary->setGeometry(10, 180, 10 + 352, 180 + 288);
 //    graphicsViewPrimary->fitInView(0, 0, 352, 288, Qt::KeepAspectRatio);
     graphicsViewPrimary->setFixedSize(width, height);
@@ -77,7 +98,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->layout()->addWidget(graphicsViewPrimary);
 
     // Right video
-    graphicsViewSecondary = new MyGraphicsView(playlist, 1, this);
+    graphicsViewSecondary = new MyGraphicsView(playlist, SECONDARY_LOCATION, 1, this);
     graphicsViewSecondary->setGeometry(370, 180, 370 + 352, 180 + 288);
     graphicsViewSecondary->resize(352, 288);
     this->layout()->addWidget(graphicsViewSecondary);
@@ -131,6 +152,8 @@ void MainWindow::on_createNewHyperlink_clicked() {
 
 void MainWindow::on_selectLinks_changed(int index) {
     currentLinkId = index;
+
+    graphicsViewPrimary->updateCurrentLink(index);
 
     qDebug() << "Link index selected: " << index;
 }

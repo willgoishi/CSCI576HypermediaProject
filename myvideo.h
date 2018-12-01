@@ -4,13 +4,14 @@
 #include "myframe.h"
 #include "QVector"
 #include "QRect"
+#include "QRectF"
 
 class MyVideo
 {
 public:
     MyVideo();
     void addFrame(MyFrame* frame);
-    void addBoundary(int frameCount, int linkId, QRect boundary);
+    void addBoundary(int frameCount, int linkId, QGraphicsRectItem* boundary);
     MyFrame* getFrame(int frameCount);
 
 private:

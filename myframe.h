@@ -2,25 +2,30 @@
 #define MYFRAME_H
 
 #include <QRect>
+#include <QRectF>
 #include <QVector>
 #include <QMap>
+#include <QGraphicsRectItem>
 
 class MyFrame
 {
 
 public:
-    MyFrame(int frameCount, int videoId, int linkId, QRect boundary);
+    MyFrame(int frameCount, int videoId, int linkId, QGraphicsRectItem* boundary);
     MyFrame(int frameCount);
 
-    void addBoundary(int linkId, QRect boundary);
+    void addBoundary(int linkId, QGraphicsRectItem* boundary);
     bool hasBoundary(int linkId);
-    QRect getBoundary(int linkId);
+    void removeBoundary(int linkId);
+    QGraphicsRectItem* getBoundary(int linkId);
+
+    QMap<int, QGraphicsRectItem*> getLinks();
 
 private:
     int frameCount;
     int videoId;
     int linkId;
-    QMap<int, QRect> links;
+    QMap<int, QGraphicsRectItem*> links;
 };
 
 #endif // MYFRAME_H

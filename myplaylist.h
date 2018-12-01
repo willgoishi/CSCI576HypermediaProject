@@ -4,6 +4,9 @@
 #include "myvideo.h"
 #include "QVector"
 
+#define PRIMARY_LOCATION 0
+#define SECONDARY_LOCATION 1
+
 class MyPlaylist
 {
 public:

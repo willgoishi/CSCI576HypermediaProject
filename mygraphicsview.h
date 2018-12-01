@@ -14,15 +14,18 @@
 #include <QRubberBand>
 #include <QLabel>
 
+
+
 class MyGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    explicit MyGraphicsView(MyPlaylist myPlaylist, int videoId, QWidget *parent = nullptr);
+    explicit MyGraphicsView(MyPlaylist myPlaylist, int graphicsLocation, int videoId, QWidget *parent = nullptr);
     void updateBoundary(int frame);
     void clearBoundary();
-    void showBoundary(QRect boundary);
+    void showBoundary(QGraphicsRectItem* boundary, int linkId);
+    void updateCurrentLink(int linkId);
 
 protected:
     void mouseMoveEvent(QMouseEvent *ev);
@@ -35,17 +38,19 @@ private:
        QRubberBand *rubberBand;
        QPoint start;
        QPoint end;
-       QRect rect;
+       QRectF rect;
        QRect lastRect;
        QGraphicsScene *scene;
        QGraphicsRectItem *rectangle;
-       MyVideo myVideo;
+       MyVideo video;
        MyPlaylist myPlaylist;
+       QMap<int, QColor> linkColorMap;
 
        // Lets us know where to store the rectangle info
        int currentFrame = 0;
        int currentLinkId = 0;
        int currentVideoId = 0;
+       int graphicsLocation = 0;
 };
 
 #endif // MYGRAPHICSVIEW_H
