@@ -11,12 +11,12 @@ class MyPlaylist
 {
 public:
     MyPlaylist();
-    void addVideo(MyVideo video);
+    void addVideo(MyVideo* video);
     // When we click to draw boundary, get the active video
-    MyVideo getActiveVideo(int videoId);
+    MyVideo* getVideo(int videoId);
 
 private:
-    QVector<MyVideo> playlist;
+    QVector<MyVideo*> playlist;
 
 };
 

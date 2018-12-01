@@ -5,12 +5,12 @@ MyPlaylist::MyPlaylist()
 
 }
 
-void MyPlaylist::addVideo(MyVideo video)
+void MyPlaylist::addVideo(MyVideo* video)
 {
     playlist.append(video);
 }
 
-MyVideo MyPlaylist::getActiveVideo(int videoId)
+MyVideo* MyPlaylist::getVideo(int videoId)
 {
     return playlist[videoId];
 }

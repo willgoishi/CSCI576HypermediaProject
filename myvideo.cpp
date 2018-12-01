@@ -1,10 +1,16 @@
 #include "myvideo.h"
 
 #include "QtDebug"
+#include "QVectorIterator"
 
 MyVideo::MyVideo()
 {
 
+}
+
+MyVideo::MyVideo(int id)
+{
+    videoId = id;
 }
 
 void MyVideo::addFrame(MyFrame *frame)
@@ -100,6 +106,36 @@ void MyVideo::addBoundary(int frameCount, int linkId, QGraphicsRectItem* boundar
 MyFrame* MyVideo::getFrame(int frameCount)
 {
     return myVideo[frameCount];
+}
+
+int MyVideo::getFirstFrameWithBoundaryFromLinkId(int linkId)
+{
+    QVectorIterator<MyFrame*> i(myVideo);
+    while(i.hasNext()) {
+        MyFrame* frame = i.next();
+        if (frame->hasBoundary(linkId)) {
+            return frame->getFrameCount();
+        }
+    }
+    return 0;
+}
+
+bool MyVideo::hasFirstFrameWithBoundaryFromLinkId(int linkId)
+{
+    QVectorIterator<MyFrame*> i(myVideo);
+    while(i.hasNext()) {
+        MyFrame* frame = i.next();
+        if (frame->hasBoundary(linkId)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int MyVideo::getVideoId()
+{
+    return videoId;
 }
 
 

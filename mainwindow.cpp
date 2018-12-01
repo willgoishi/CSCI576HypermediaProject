@@ -1,9 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "myframe.h"
-#include "myvideo.h"
 #include "mygraphicsview.h"
-#include "myplaylist.h"
 
 #include <QVector>
 #include <QMediaService>
@@ -39,47 +37,41 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Create playlist to hold all the videos
-    MyPlaylist playlist;
-
     int totalFrames = 101;
 
+    // Create 1st video & add to playlist
+    int videoId = 0;
+    primaryVideo = new MyVideo(videoId);
 
-    // Create a video
-    MyVideo primaryVideo;
-
-    // Generate frames for video
     for (int i = 0; i < totalFrames; i++) {
 
         // Constructor for video
         int frameCount = i;
-        int videoId = 0;
-        int linkId = 0;
-        QRect boundary = QRect();
 
         // Create node & append
-        MyFrame* frame = new MyFrame(frameCount);
-        primaryVideo.addFrame(frame);
+        MyFrame* frame = new MyFrame(frameCount, videoId);
+        primaryVideo->addFrame(frame);
     }
 
     playlist.addVideo(primaryVideo);
 
+    qDebug() << "primaryVideo size()" << primaryVideo->myVideo.size();
 
-    // Create a video
-    MyVideo secondaryVideo;
+    // Create 2nd video & add to playlist
+    videoId = 1;
+    secondaryVideo = new MyVideo(videoId);
 
-    // Generate frames for video
     for (int i = 0; i < totalFrames; i++) {
 
         // Constructor for video
         int frameCount = i;
-        int videoId = 0;
-        int linkId = 0;
-        QRect boundary = QRect();
 
         // Create node & append
-        MyFrame* frame = new MyFrame(frameCount);
-        primaryVideo.addFrame(frame);
+        MyFrame* frame = new MyFrame(frameCount, videoId);
+        secondaryVideo->addFrame(frame);
     }
+
+    qDebug() << "secondaryVideo size()" << secondaryVideo->myVideo.size();
 
     playlist.addVideo(secondaryVideo);
 
@@ -114,7 +106,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed(int)));
     connect(ui->horizontalSliderRight, SIGNAL(valueChanged(int)), this, SLOT(on_sliderRight_changed(int)));
     connect(ui->createNewHyperLink, SIGNAL(released()), this, SLOT(on_createNewHyperlink_clicked()));
+//    connect(ui->connectVideo, SIGNAL(released()), this, SLOT(on_connectVideo_clicked()));
     connect(ui->selectLinks, SIGNAL(activated(int)), this, SLOT(on_selectLinks_changed(int)));
+    connect(ui->selectLinks, SIGNAL(editTextChanged(QString)), this, SLOT(on_selectLinks_edited(QString)));
 
     resize(960, 640);
 }
@@ -155,5 +149,47 @@ void MainWindow::on_selectLinks_changed(int index) {
 
     graphicsViewPrimary->updateCurrentLink(index);
 
+    // Get 1st frame of link in video
+    int frameIndex = primaryVideo->getFirstFrameWithBoundaryFromLinkId(currentLinkId);
+
+    if (primaryVideo->hasFirstFrameWithBoundaryFromLinkId(currentLinkId)) {
+        ui->horizontalSliderLeft->setValue(frameIndex);
+    }
+
+    qDebug() << "1st frame for linkId:" << currentLinkId << " is " << frameIndex;
+
     qDebug() << "Link index selected: " << index;
+}
+
+void MainWindow::on_selectLinks_edited(QString label)
+{
+    qDebug() << "edit label: "  << label;
+
+    ui->selectLinks->setItemText(ui->selectLinks->currentIndex(), label);
+}
+
+void MainWindow::on_connectVideo_clicked()
+{
+    qDebug() << "on_connectVideo_clicked";
+
+    // Get info of primary video
+    int srcFrameCount = ui->horizontalSliderLeft->value();
+
+    // Get info of secondary video
+//    int targetVideoId = secondaryVideo.getVideoId();
+    int targetFrameCount = ui->horizontalSliderRight->value();
+
+    MyFrame* srcFrame = primaryVideo->getFrame(srcFrameCount);
+    MyFrame* targetFrame = secondaryVideo->getFrame(targetFrameCount);
+
+    srcFrame->addHyperlinkTarget(currentLinkId, targetFrame);
+
+//    // Get data from playlist
+    MyVideo* primaryVideo = playlist.getVideo(0);
+    srcFrame = primaryVideo->getFrame(srcFrameCount);
+    targetFrame = srcFrame->getHyperlinkTarget(currentLinkId);
+
+    qDebug() << "Target frame: " << targetFrame->getFrameCount();
+    qDebug() << "Target video: " << targetFrame->getVideoId();
+
 }

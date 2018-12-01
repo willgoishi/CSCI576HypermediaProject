@@ -10,12 +10,20 @@ class MyVideo
 {
 public:
     MyVideo();
+    MyVideo(int id);
     void addFrame(MyFrame* frame);
     void addBoundary(int frameCount, int linkId, QGraphicsRectItem* boundary);
     MyFrame* getFrame(int frameCount);
+    int getFirstFrameWithBoundaryFromLinkId(int linkId);
+    bool hasFirstFrameWithBoundaryFromLinkId(int linkId);
+
+
+    int getVideoId();
+    QVector<MyFrame*> myVideo;
+
 
 private:
-    QVector<MyFrame*> myVideo;
+    int videoId;
 };
 
 #endif // MYVIDEO_H

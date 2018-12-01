@@ -42,7 +42,7 @@ private:
        QRect lastRect;
        QGraphicsScene *scene;
        QGraphicsRectItem *rectangle;
-       MyVideo video;
+       MyVideo* video;
        MyPlaylist myPlaylist;
        QMap<int, QColor> linkColorMap;
 

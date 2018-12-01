@@ -65,8 +65,8 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
     if (releasePoint == start) {
 
         // Delete boundary
-        MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
-        MyFrame* frame = video.getFrame(currentFrame);
+        MyVideo* video = myPlaylist.getVideo(currentVideoId);
+        MyFrame* frame = video->getFrame(currentFrame);
         frame->removeBoundary(currentLinkId);
         updateBoundary(currentFrame);
 
@@ -79,9 +79,9 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
 
         qDebug() << "Add Rectangle to vector: linkID: " << this->currentLinkId;
 
-        MyVideo video = myPlaylist.getActiveVideo(currentVideoId);
+        MyVideo* video = myPlaylist.getVideo(currentVideoId);
         QGraphicsRectItem* boundary = new QGraphicsRectItem(rect);
-        video.addBoundary(currentFrame, currentLinkId, boundary);
+        video->addBoundary(currentFrame, currentLinkId, boundary);
         updateBoundary(currentFrame);
     }
     QGraphicsView::mouseReleaseEvent(ev);
@@ -114,11 +114,11 @@ void MyGraphicsView::updateBoundary(int frameId)
     clearBoundary();
 
     // Check if boundary exists for current frame
-    video = myPlaylist.getActiveVideo(currentVideoId);
+    video = myPlaylist.getVideo(currentVideoId);
 
     qDebug() << "updateBoundary(), frame =" << currentFrame;
 
-    MyFrame* frame = video.getFrame(currentFrame);
+    MyFrame* frame = video->getFrame(currentFrame);
 
     qDebug() << "currentLinkId: " << currentLinkId;
 

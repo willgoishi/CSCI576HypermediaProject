@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include "mygraphicsview.h"
+#include "myplaylist.h"
+#include "myvideo.h"
 
 #include <QMainWindow>
 #include <QWidget>
@@ -41,11 +43,17 @@ private slots:
     void on_sliderRight_changed(int);
     void on_createNewHyperlink_clicked();
     void on_selectLinks_changed(int);
+    void on_selectLinks_edited(QString);
+    void on_connectVideo_clicked();
 
 private:
     Ui::MainWindow* ui;
     MyGraphicsView* graphicsViewPrimary;
     MyGraphicsView* graphicsViewSecondary;
+
+    MyPlaylist playlist;
+    MyVideo* primaryVideo;
+    MyVideo* secondaryVideo;
 
     int currentLinkId = 0;
     int currentPrimaryFrame = 0;    // Frame for left video
