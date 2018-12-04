@@ -46,6 +46,8 @@ private slots:
     void on_selectLinks_edited(QString);
     void on_connectVideo_clicked();
     void on_saveFile_clicked();
+    void saveJson(QJsonDocument document, QString fileName);
+    QJsonDocument loadJson(QString fileName);    
 
 private:
     Ui::MainWindow* ui;

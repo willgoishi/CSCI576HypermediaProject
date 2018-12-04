@@ -14,9 +14,9 @@ public:
     void addVideo(MyVideo* video);
     // When we click to draw boundary, get the active video
     MyVideo* getVideo(int videoId);
+    QVector<MyVideo*> playlist;
 
 private:
-    QVector<MyVideo*> playlist;
 
 };
 

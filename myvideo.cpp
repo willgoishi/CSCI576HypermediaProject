@@ -138,6 +138,13 @@ int MyVideo::getVideoId()
     return videoId;
 }
 
+QJsonObject MyVideo::toJson()
+{
+    return {
+        { "videoId", videoId }
+    };
+}
+
 
 
 

@@ -5,6 +5,9 @@
 #include "QVector"
 #include "QRect"
 #include "QRectF"
+#include <QtCore>
+#include <cstdio>
+
 
 class MyVideo
 {
@@ -20,10 +23,10 @@ public:
 
     int getVideoId();
     QVector<MyFrame*> myVideo;
-
-
-private:
     int videoId;
+
+    QJsonObject toJson();
+
 };
 
 #endif // MYVIDEO_H
