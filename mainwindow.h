@@ -49,6 +49,14 @@ private slots:
     void saveJson(QJsonDocument document, QString fileName);
     QJsonDocument loadJson(QString fileName);
 
+
+    // Player
+    void tabSelected(int);
+    void on_playerPlay_clicked();
+    void on_playerPause_clicked();
+    void on_playerStop_clicked();
+
+
 private:
     Ui::MainWindow* ui;
     MyGraphicsView* graphicsViewPrimary;

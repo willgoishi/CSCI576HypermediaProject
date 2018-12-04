@@ -110,8 +110,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->selectLinks, SIGNAL(activated(int)), this, SLOT(on_selectLinks_changed(int)));
     connect(ui->selectLinks, SIGNAL(editTextChanged(QString)), this, SLOT(on_selectLinks_edited(QString)));
 //    connect(ui->saveFile, SIGNAL(released()), this, SLOT(on_saveFile_clicked()));
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSelected(int)));
 
-    resize(960, 640);
+
+
+    resize(740, 620);
 }
 
 MainWindow::~MainWindow()
@@ -238,6 +241,96 @@ void MainWindow::on_saveFile_clicked()
     saveJson(jsonDocument, "./data.json");
 
 
+}
+
+void MainWindow::tabSelected(int tab)
+{
+    qDebug() << "Tab selected";
+
+    // If showing player
+    if (tab == 1)  {
+        graphicsViewPrimary->hide();
+        graphicsViewSecondary->hide();
+
+        // Load data
+
+        // Get path
+        QString filepath = qApp->applicationDirPath() + "/data.json";
+//        qDebug() << filepath;
+
+        QJsonDocument doc = loadJson(filepath);
+        QJsonArray jsonArray = doc.array();
+
+        foreach(const QJsonValue &v, jsonArray) {
+
+            QJsonObject video = v.toObject();
+
+            // Load boundary for frames
+            QJsonArray frames = video.value("frames").toArray();
+//            MyFrame* frame = new MyFrame();
+
+            foreach(const QJsonValue &v2, frames) {
+                QJsonObject frame = v2.toObject();
+                QJsonArray boundaries = frame.value("boundaries").toArray();
+
+                int frameCount = frame.value("frameCount").toInt();
+                int videoId = frame.value("videoId").toInt();
+
+                qDebug() << "frameCount: " << frameCount;
+                qDebug() << "videoId: " << videoId;
+
+
+                // Create frame
+                MyFrame* myFrame = new MyFrame(frameCount, videoId);
+
+                // If we have boundaries
+                if (boundaries.count() > 0) {
+
+                    qDebug() << "\n Boundaries \n" << boundaries << "\n";
+
+                    foreach(const QJsonValue &v3, boundaries) {
+
+                        QJsonObject boundary = v3.toObject();
+                        QJsonArray coords = boundary.value("coords").toArray();
+                        QJsonValue linkId = boundary.value("linkId").toDouble();
+
+                        qDebug() << "\n Coords \n" << coords << "\n";
+                        qDebug() << "\n linkId \n" << linkId << "\n";
+
+                    }
+                }
+            }
+
+
+
+            qDebug() << "\nFrames: \n" << frames << "\n";
+
+            // Load videoId
+
+            // Load hyperlinks
+
+            qDebug() << v.toObject() << "\n";
+        }
+
+    } else {
+        graphicsViewPrimary->show();
+        graphicsViewSecondary->show();
+    }
+}
+
+void MainWindow::on_playerPlay_clicked()
+{
+    qDebug() << "Player play clicked";
+}
+
+void MainWindow::on_playerPause_clicked()
+{
+    qDebug() << "Player pause clicked";
+}
+
+void MainWindow::on_playerStop_clicked()
+{
+    qDebug() << "Player stop clicked";
 }
 
 void MainWindow::saveJson(QJsonDocument document, QString fileName)

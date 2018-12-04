@@ -109,6 +109,7 @@ QJsonObject MyFrame::toJson()
 //    QJsonDocument json = QJsonDocument::fromVariant(linksMap);
 
     obj.insert("boundaries", boundaries);
+    obj.insert("videoId", videoId);
 
     return obj;
 }
