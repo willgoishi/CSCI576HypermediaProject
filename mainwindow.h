@@ -55,8 +55,12 @@ private:
     MyGraphicsView* graphicsView;
     MyGraphicsView* graphicsView2;
 
-    std::vector<QImage*> PrimaryUploadImages;
-    std::vector<QImage*> SecondaryUploadImages;
+    //std::vector<QImage*> PrimaryUploadImages;
+    //std::vector<QImage*> SecondaryUploadImages;
+
+    QGraphicsPixmapItem* pixMapPrim;
+    QGraphicsPixmapItem* pixMapSec;
+
     QImage imageQ;
     size_t numberImageFilesPrimary;
     size_t numberImageFilesSecondary;

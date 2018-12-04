@@ -72,24 +72,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_sliderLeft_changed()
-{
-    qDebug() << "on slider left changed";
-    qDebug() << (segmentIndexPrimary*200) + ui->horizontalSliderLeft->value();
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(primList.at((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value())));
-    graphicsView->scene->addItem(item);
-    ui->left_sliderLabel->setText(QString::number((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value()));
-}
-
-void MainWindow::on_sliderRight_changed()
-{
-    qDebug() << "on slider right changed";
-    qDebug() << (segmentIndexSecondary*200) + ui->horizontalSliderRight->value();
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(secList.at((segmentIndexSecondary*200) + ui->horizontalSliderRight->value())));
-    graphicsView2->scene->addItem(item);
-    ui->right_sliderLabel->setText(QString::number((segmentIndexSecondary*200) + ui->horizontalSliderRight->value()));
-}
-
 void imageLoading(QStringList imageFileNames,
                               QStringList constStrs,
                               QList<QImage> *images,
@@ -129,8 +111,6 @@ void imageLoading(QStringList imageFileNames,
         img = img.convertToFormat(QImage::Format_RGB444);//Format_Indexed8 //Format_RGB16
         images->push_back(img);
 
-        qDebug() << "reached";
-
         if(constStrs.at(1) == "primaryNextFramesButton" || constStrs.at(1) == "secondaryNextFramesButton" || constStrs.at(1) == "importPrimaryButton" || constStrs.at(1) == "importSecondaryButton"){
             fileNamesPrev->append(filename);
             fileNames->removeFirst();
@@ -141,15 +121,12 @@ void imageLoading(QStringList imageFileNames,
             fileNames->removeLast();
         }
         count++;
-        qDebug() << filename;
     }
+        qDebug() << "Done Loading!";
 }
 
 void MainWindow::import()
 {
-    PrimaryUploadImages.clear();
-    SecondaryUploadImages.clear();
-
     QFileDialog upload(this);
     upload.setFileMode(QFileDialog::Directory);
     upload.setAcceptMode(QFileDialog::AcceptOpen);
@@ -187,6 +164,22 @@ void MainWindow::import()
 
     caller == "importPrimaryButton" ? ui->primaryNextFramesButton->setEnabled(true) :  ui->secondaryNextFramesButton->setEnabled(true);
     qDebug() << "Done Loading!";
+}
+
+void MainWindow::on_sliderLeft_changed()
+{
+    //qDebug() << "on slider left changed";
+    pixMapPrim = new QGraphicsPixmapItem(QPixmap::fromImage(primList.at((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value())));
+    graphicsView->scene->addItem(pixMapPrim);
+    ui->left_sliderLabel->setText(QString::number((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value()));
+}
+
+void MainWindow::on_sliderRight_changed()
+{
+    //qDebug() << "on slider right changed";
+    pixMapSec = new QGraphicsPixmapItem(QPixmap::fromImage(secList.at((segmentIndexSecondary*200) + ui->horizontalSliderRight->value())));
+    graphicsView2->scene->addItem(pixMapSec);
+    ui->right_sliderLabel->setText(QString::number((segmentIndexSecondary*200) + ui->horizontalSliderRight->value()));
 }
 
 void MainWindow::on_primaryNextFramesButton_clicked()
