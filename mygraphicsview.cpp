@@ -52,7 +52,7 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
 
 void MyGraphicsView::paintEvent(QPaintEvent *ev)
 {
-    qDebug() << "paintEvent";
+    //qDebug() << "paintEvent";
     QGraphicsView::paintEvent(ev);
 
     QPainter painter(this->viewport());

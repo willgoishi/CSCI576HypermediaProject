@@ -168,6 +168,11 @@ void MainWindow::import()
 
 void MainWindow::on_sliderLeft_changed()
 {
+    if((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value() >= primList.size())
+    {
+        return;
+    }
+
     //qDebug() << "on slider left changed";
     pixMapPrim = new QGraphicsPixmapItem(QPixmap::fromImage(primList.at((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value())));
     graphicsView->scene->addItem(pixMapPrim);
@@ -176,6 +181,11 @@ void MainWindow::on_sliderLeft_changed()
 
 void MainWindow::on_sliderRight_changed()
 {
+    if((segmentIndexSecondary*200) + ui->horizontalSliderRight->value() >= secList.size())
+    {
+        return;
+    }
+
     //qDebug() << "on slider right changed";
     pixMapSec = new QGraphicsPixmapItem(QPixmap::fromImage(secList.at((segmentIndexSecondary*200) + ui->horizontalSliderRight->value())));
     graphicsView2->scene->addItem(pixMapSec);
@@ -191,7 +201,11 @@ void MainWindow::on_primaryNextFramesButton_clicked()
 
     qDebug() << ((segmentIndexPrimary+2)*200);
 
-    if((((segmentIndexPrimary+1)*200)) >= 1000)
+    if((((segmentIndexPrimary+1)*200)) == 1000 && primaryFileNames_p.size() == numberImageFilesPrimary)
+    {
+        ui->primaryNextFramesButton->setEnabled(false);
+    }
+    else if((((segmentIndexPrimary+1)*200)) >= 1000)
     {
         QString caller = QObject::sender()->objectName();
         staticConstStringsPrimary[1] = caller;
@@ -199,10 +213,6 @@ void MainWindow::on_primaryNextFramesButton_clicked()
         segmentIndexPrimary = 0;
         QFuture<void> loadNext = run(imageLoading, primaryFileNames_n, staticConstStringsPrimary, &primList, &primaryFileNames_n, &primaryFileNames_p);
         loadNext.waitForFinished();
-    }
-    else if(primaryFileNames_p.size() == numberImageFilesPrimary)
-    {
-        ui->primaryNextFramesButton->setEnabled(false);
     }
     else{
         segmentIndexPrimary++;
@@ -215,7 +225,14 @@ void MainWindow::on_secondaryNextFramesButton_clicked()
     {
         ui->secondaryPrevFramesButton->setEnabled(true);
     }
-    if((((segmentIndexSecondary+1)*200)) >= 1000)
+
+    if((((segmentIndexSecondary+1)*200)) == 1000 && secondaryFileNames_p.size() == numberImageFilesSecondary)
+    {
+        qDebug() << secondaryFileNames_p.size();
+        qDebug() << numberImageFilesSecondary;
+        ui->secondaryNextFramesButton->setEnabled(false);
+    }
+    else if((((segmentIndexSecondary+1)*200)) >= 1000)
     {
         QString caller = QObject::sender()->objectName();
         staticConstStringsSecondary[1] = caller;
@@ -223,10 +240,6 @@ void MainWindow::on_secondaryNextFramesButton_clicked()
         segmentIndexSecondary = 0;
         QFuture<void> loadNext = run(imageLoading, secondaryFileNames_n, staticConstStringsSecondary, &secList, &secondaryFileNames_n, &secondaryFileNames_p);
         loadNext.waitForFinished();
-    }
-    else if(secondaryFileNames_p.size() == numberImageFilesSecondary)
-    {
-        ui->secondaryNextFramesButton->setEnabled(false);
     }
     else{
         segmentIndexSecondary++;
@@ -239,7 +252,6 @@ void MainWindow::on_primaryPrevFramesButton_clicked()
     {
         ui->primaryPrevFramesButton->setEnabled(false);
     }
-
     if(segmentIndexPrimary == 0)
     {
         QString caller = QObject::sender()->objectName();
