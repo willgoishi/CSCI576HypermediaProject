@@ -326,7 +326,6 @@ void MainWindow::tabSelected(int tab)
             qDebug() << "\nFrames: \n" << frames << "\n";
 
             // Load hyperlinks
-            // Load boundary for frames
             QJsonArray hyperlinks = video.value("hyperlinks").toArray();
 
             foreach(const QJsonValue &v4, hyperlinks) {
@@ -334,6 +333,8 @@ void MainWindow::tabSelected(int tab)
                 int frameCount = hyperlink.value("frameCount").toInt();
                 int linkId = hyperlink.value("linkId").toInt();
                 QString videoTitle = hyperlink.value("videoTitle").toString();
+                
+                myVideo->addHyperlinkTarget(linkId, new MyFrame(frameCount, videoTitle));
             }
 
 

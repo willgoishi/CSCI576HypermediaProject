@@ -1,5 +1,6 @@
 #include "myvideo.h"
 
+
 #include "QtDebug"
 #include "QVectorIterator"
 
@@ -8,14 +9,15 @@ MyVideo::MyVideo()
 
 }
 
-MyVideo::MyVideo(int id)
+MyVideo::MyVideo(QString videoTitle)
 {
-    videoId = id;
+    this->videoTitle = videoTitle;
 }
 
-void MyVideo::addFrame(MyFrame *frame)
+void MyVideo::addFrame(MyFrame* frame)
 {
     myVideo.append(frame);
+//    frame->video = myVideo;
 }
 
 void MyVideo::addBoundary(int frameCount, int linkId, QGraphicsRectItem* boundary)
@@ -143,11 +145,6 @@ MyFrame *MyVideo::getHyperlinkTarget(int linkId)
     return hyperlinks[linkId];
 }
 
-int MyVideo::getVideoId()
-{
-    return videoId;
-}
-
 QJsonObject MyVideo::toJson()
 {
     QJsonArray framesArray;
@@ -166,7 +163,7 @@ QJsonObject MyVideo::toJson()
         QJsonObject target;
         target.insert("linkId", linkId);
         target.insert("frameCount", targetFrame->getFrameCount());
-        target.insert("videoId", targetFrame->videoId);
+        target.insert("videoTitle", targetFrame->videoTitle);
 
         QJsonObject obj;
         hyperlinksArray.push_back(target);
@@ -174,7 +171,7 @@ QJsonObject MyVideo::toJson()
 
 
     return {
-        { "videoId", videoId },
+        { "videoTitle", videoTitle },
         { "hyperlinks", hyperlinksArray },
         { "frames", framesArray }
     };

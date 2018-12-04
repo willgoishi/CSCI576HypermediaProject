@@ -1,5 +1,6 @@
 #include "myframe.h"
 
+
 #include <QtDebug>
 #include <QRectF>
 #include <QGraphicsRectItem>
@@ -7,17 +8,10 @@
 #include <QJsonArray>
 #include <QVariantMap>
 
-MyFrame::MyFrame(int frameCount, int videoId, int linkId, QGraphicsRectItem* boundary)
-{
-    qDebug() << "frameCount: " << frameCount;
-    qDebug() << "videoId: " << videoId;
-    qDebug() << "linkId: " << linkId;
-}
-
-MyFrame::MyFrame(int frameCount, int videoId)
+MyFrame::MyFrame(int frameCount, QString videoTitle)
 {
     this->frameCount = frameCount;
-    this->videoId = videoId;
+    this->videoTitle = videoTitle;
 //    qDebug() << "frameCount: " << frameCount;
 }
 
@@ -48,22 +42,6 @@ QGraphicsRectItem* MyFrame::getBoundary(int linkId)
     return links[linkId];
 }
 
-//void MyFrame::addHyperlinkTarget(int linkId, MyFrame *frame)
-//{
-//    qDebug() << "Add hyperlink target";
-
-//    hyperlinks.insert(linkId, frame);
-//}
-
-//MyFrame *MyFrame::getHyperlinkTarget(int linkId)
-//{
-//    return hyperlinks[linkId];
-//}
-
-int MyFrame::getVideoId()
-{
-    return videoId;
-}
 
 QMap<int, QGraphicsRectItem*> MyFrame::getLinks()
 {
@@ -109,7 +87,7 @@ QJsonObject MyFrame::toJson()
 //    QJsonDocument json = QJsonDocument::fromVariant(linksMap);
 
     obj.insert("boundaries", boundaries);
-    obj.insert("videoId", videoId);
+    obj.insert("videoTitle", videoTitle);
 
     return obj;
 }

@@ -65,6 +65,8 @@ private:
     MyPlaylist playlist;
     MyVideo* primaryVideo;
     MyVideo* secondaryVideo;
+    // Used for playing
+    MyPlaylist playerPlaylist;
 
     int currentLinkId = 0;
     int currentPrimaryFrame = 0;    // Frame for left video

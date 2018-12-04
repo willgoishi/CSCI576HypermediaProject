@@ -2,6 +2,7 @@
 #define MYVIDEO_H
 
 #include "myframe.h"
+
 #include "QVector"
 #include "QRect"
 #include "QRectF"
@@ -14,7 +15,7 @@ class MyVideo
 {
 public:
     MyVideo();
-    MyVideo(int id);
+    MyVideo(QString videoTitle);
     void addFrame(MyFrame* frame);
     void addBoundary(int frameCount, int linkId, QGraphicsRectItem* boundary);
     MyFrame* getFrame(int frameCount);
@@ -22,11 +23,11 @@ public:
     bool hasFirstFrameWithBoundaryFromLinkId(int linkId);
 
     void addHyperlinkTarget(int linkId, MyFrame* frame);
-    MyFrame *getHyperlinkTarget(int linkId);
+    MyFrame* getHyperlinkTarget(int linkId);
 
     int getVideoId();
     QVector<MyFrame*> myVideo;
-    int videoId;
+    QString videoTitle;
 
     // LinkId maps to frame
     QMap<int, MyFrame*> hyperlinks;

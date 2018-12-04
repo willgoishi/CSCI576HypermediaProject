@@ -12,28 +12,20 @@ class MyFrame
 {
 
 public:
-    MyFrame(int frameCount, int videoId, int linkId, QGraphicsRectItem* boundary);
-    MyFrame(int frameCount, int videoId);
-
+    MyFrame(int frameCount, QString videoTitle);
     void addBoundary(int linkId, QGraphicsRectItem* boundary);
     bool hasBoundary(int linkId);
     void removeBoundary(int linkId);
     int getFrameCount();
     QGraphicsRectItem* getBoundary(int linkId);
-
-//    void addHyperlinkTarget(int linkId, MyFrame* frame);
-//    MyFrame *getHyperlinkTarget(int linkId);
-
-    int getVideoId();
     QMap<int, QGraphicsRectItem*> getLinks();
     QJsonObject toJson();
-    int videoId;
+    QString videoTitle;
+
 private:
     int frameCount;
     int linkId;
     QMap<int, QGraphicsRectItem*> links;
-//    QMap<int, MyFrame*> hyperlinks;
-//    MyFrame* hyperlinkTarget;
 };
 
 #endif // MYFRAME_H
