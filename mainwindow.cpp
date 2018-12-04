@@ -180,19 +180,29 @@ void MainWindow::on_connectVideo_clicked()
 //    int targetVideoId = secondaryVideo.getVideoId();
     int targetFrameCount = ui->horizontalSliderRight->value();
 
-    MyFrame* srcFrame = primaryVideo->getFrame(srcFrameCount);
+
+//    MyFrame* srcFrame = primaryVideo->getFrame(srcFrameCount);
     MyFrame* targetFrame = secondaryVideo->getFrame(targetFrameCount);
 
-    srcFrame->addHyperlinkTarget(currentLinkId, targetFrame);
+    primaryVideo->addHyperlinkTarget(currentLinkId, targetFrame);
 
 //    // Get data from playlist
-    MyVideo* primaryVideo = playlist.getVideo(0);
-    srcFrame = primaryVideo->getFrame(srcFrameCount);
-    targetFrame = srcFrame->getHyperlinkTarget(currentLinkId);
+//    MyVideo* primaryVideo = playlist.getVideo(0);
+//    srcFrame = primaryVideo->getFrame(srcFrameCount);
+//    targetFrame = srcFrame->getHyperlinkTarget(currentLinkId);
 
-    qDebug() << "Src link ID: " << currentLinkId;
-    qDebug() << "Target frame: " << targetFrame->getFrameCount();
-    qDebug() << "Target video: " << targetFrame->getVideoId();
+//    QMap<int, MyFrame*>::iterator i(primaryVideo->hyperlinks);
+
+    foreach(int key, primaryVideo->hyperlinks.keys()) {
+        MyFrame * targetFrame = primaryVideo->hyperlinks.value(key);
+        qDebug() << "Link ID: " << key;
+        qDebug() << "Frame Count: " << targetFrame->getFrameCount();
+        qDebug() << "Frame Video: " << targetFrame->videoId;
+    }
+
+//    qDebug() << "Src link ID: " << currentLinkId;
+//    qDebug() << "Target frame: " << targetFrame->getFrameCount();
+//    qDebug() << "Target video: " << targetFrame->getVideoId();
 
 }
 

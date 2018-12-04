@@ -48,17 +48,17 @@ QGraphicsRectItem* MyFrame::getBoundary(int linkId)
     return links[linkId];
 }
 
-void MyFrame::addHyperlinkTarget(int linkId, MyFrame *frame)
-{
-    qDebug() << "Add hyperlink target";
+//void MyFrame::addHyperlinkTarget(int linkId, MyFrame *frame)
+//{
+//    qDebug() << "Add hyperlink target";
 
-    hyperlinks.insert(linkId, frame);
-}
+//    hyperlinks.insert(linkId, frame);
+//}
 
-MyFrame *MyFrame::getHyperlinkTarget(int linkId)
-{
-    return hyperlinks[linkId];
-}
+//MyFrame *MyFrame::getHyperlinkTarget(int linkId)
+//{
+//    return hyperlinks[linkId];
+//}
 
 int MyFrame::getVideoId()
 {
@@ -100,6 +100,8 @@ QJsonObject MyFrame::toJson()
 
         boundaryObj.insert("linkId", i.key());
         boundaryObj.insert("coords", rectCoords);
+//        boundaryObj.insert("targ")
+
 
         boundaries.push_back(boundaryObj);
     }

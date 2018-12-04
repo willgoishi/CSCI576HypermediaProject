@@ -21,20 +21,19 @@ public:
     int getFrameCount();
     QGraphicsRectItem* getBoundary(int linkId);
 
-    void addHyperlinkTarget(int linkId, MyFrame* frame);
-    MyFrame *getHyperlinkTarget(int linkId);
+//    void addHyperlinkTarget(int linkId, MyFrame* frame);
+//    MyFrame *getHyperlinkTarget(int linkId);
 
     int getVideoId();
     QMap<int, QGraphicsRectItem*> getLinks();
     QJsonObject toJson();
-
+    int videoId;
 private:
     int frameCount;
-    int videoId;
     int linkId;
     QMap<int, QGraphicsRectItem*> links;
-    QMap<int, MyFrame*> hyperlinks;
-    MyFrame* hyperlinkTarget;
+//    QMap<int, MyFrame*> hyperlinks;
+//    MyFrame* hyperlinkTarget;
 };
 
 #endif // MYFRAME_H

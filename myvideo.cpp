@@ -133,6 +133,16 @@ bool MyVideo::hasFirstFrameWithBoundaryFromLinkId(int linkId)
     return false;
 }
 
+void MyVideo::addHyperlinkTarget(int linkId, MyFrame *frame)
+{
+    hyperlinks.insert(linkId, frame);
+}
+
+MyFrame *MyVideo::getHyperlinkTarget(int linkId)
+{
+    return hyperlinks[linkId];
+}
+
 int MyVideo::getVideoId()
 {
     return videoId;
@@ -149,8 +159,23 @@ QJsonObject MyVideo::toJson()
         framesArray.push_back(frameObj);
     }
 
+    QJsonArray hyperlinksArray;
+
+    foreach(int linkId, hyperlinks.keys()) {
+        MyFrame * targetFrame = hyperlinks.value(linkId);
+        QJsonObject target;
+        target.insert("linkId", linkId);
+        target.insert("frameCount", targetFrame->getFrameCount());
+        target.insert("videoId", targetFrame->videoId);
+
+        QJsonObject obj;
+        hyperlinksArray.push_back(target);
+    }
+
+
     return {
         { "videoId", videoId },
+        { "hyperlinks", hyperlinksArray },
         { "frames", framesArray }
     };
 }

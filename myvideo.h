@@ -21,10 +21,15 @@ public:
     int getFirstFrameWithBoundaryFromLinkId(int linkId);
     bool hasFirstFrameWithBoundaryFromLinkId(int linkId);
 
+    void addHyperlinkTarget(int linkId, MyFrame* frame);
+    MyFrame *getHyperlinkTarget(int linkId);
 
     int getVideoId();
     QVector<MyFrame*> myVideo;
     int videoId;
+
+    // LinkId maps to frame
+    QMap<int, MyFrame*> hyperlinks;
 
     QJsonObject toJson();
 
