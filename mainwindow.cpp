@@ -200,25 +200,32 @@ void MainWindow::on_saveFile_clicked()
 {
     qDebug() << "Save file";
 
+    QJsonArray jsonArray;
 
     QVectorIterator<MyVideo*> i(playlist.playlist);
+
     while(i.hasNext()) {
         MyVideo* video = i.next();
-        QJsonObject json = video->toJson();
 
-        saveJson()
+        // Create object
+        QJsonObject jsonObj = video->toJson();
+//        QJsonArray jsonFrames;
 
-//        QVectorIterator<MyFrame*> i2(video->myVideo);
-//        while(i2.hasNext()) {
-//            MyFrame* frame = i2.next();
+//        jsonObj.insert("videoId", video->videoId);
+//        jsonObj.insert("frames", jsonFrames);
 
-
-//        }
-
-//         QJsonArray npcArray = json["npcs"].toArray();
-
+        // Add obj to array
+        jsonArray.push_back(jsonObj);
 
     }
+
+    qDebug() << jsonArray;
+
+    QJsonDocument jsonDocument = QJsonDocument(jsonArray);
+
+    qDebug() << jsonDocument;
+
+    saveJson(jsonDocument, "./data.json");
 
 
 }

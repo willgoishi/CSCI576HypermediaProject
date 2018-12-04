@@ -140,8 +140,18 @@ int MyVideo::getVideoId()
 
 QJsonObject MyVideo::toJson()
 {
+    QJsonArray framesArray;
+
+    QVectorIterator<MyFrame*> i(myVideo);
+    while (i.hasNext()) {
+        MyFrame* frame = i.next();
+        QJsonObject frameObj = frame->toJson();
+        framesArray.push_back(frameObj);
+    }
+
     return {
-        { "videoId", videoId }
+        { "videoId", videoId },
+        { "frames", framesArray }
     };
 }
 

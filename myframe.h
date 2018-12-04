@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QMap>
 #include <QGraphicsRectItem>
+#include <QJsonObject>
 
 class MyFrame
 {
@@ -25,6 +26,7 @@ public:
 
     int getVideoId();
     QMap<int, QGraphicsRectItem*> getLinks();
+    QJsonObject toJson();
 
 private:
     int frameCount;

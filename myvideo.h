@@ -5,8 +5,9 @@
 #include "QVector"
 #include "QRect"
 #include "QRectF"
-#include <QtCore>
-#include <cstdio>
+#include "QJsonArray"
+#include "QJsonObject"
+#include "QtCore"
 
 
 class MyVideo
