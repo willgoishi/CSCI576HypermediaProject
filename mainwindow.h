@@ -36,19 +36,48 @@ public:
     Player *hyperLinkWindow;
     ~MainWindow();
 
+public slots:
+    void import();
+    //void imageLoading(QStringList, QString, QString, QList<QImage> &images, QStringList *fileNames);
 
 private slots:
-    void import();
     void on_sliderLeft_changed();
     void on_sliderRight_changed();
+
+    void on_primaryNextFramesButton_clicked();
+    void on_secondaryNextFramesButton_clicked();
+
+    void on_primaryPrevFramesButton_clicked();
+    void on_secondaryPrevFramesButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     MyGraphicsView* graphicsView;
     MyGraphicsView* graphicsView2;
+
     std::vector<QImage*> PrimaryUploadImages;
     std::vector<QImage*> SecondaryUploadImages;
     QImage imageQ;
+    size_t numberImageFilesPrimary;
+    size_t numberImageFilesSecondary;
+
+    QList<QImage> primList;
+    QList<QImage> secList;
+
+    QString primaryVideoFilePath;
+    QStringList primaryFileNames_n;
+    QStringList primaryFileNames_p;
+
+    QString secondaryVideoFilePath;
+    QStringList secondaryFileNames_n;
+    QStringList secondaryFileNames_p;
+
+    size_t segmentIndexPrimary = 0;
+    size_t segmentIndexSecondary = 0;
+
+    QStringList staticConstStringsPrimary;
+    QStringList staticConstStringsSecondary;
+
 };
 
 #endif // MAINWINDOW_H

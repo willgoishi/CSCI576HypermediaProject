@@ -2,6 +2,10 @@
 #include "ui_mainwindow.h"
 #include "myplayer.h"
 #include "mygraphicsview.h"
+#include "drawarea.h"
+#include "mywidget.h"
+#include "image.h"
+#include <QtConcurrent/qtconcurrentrun.h>
 
 #include <QMediaService>
 #include <QMediaPlaylist>
@@ -9,9 +13,6 @@
 #include <QAudioProbe>
 #include <QMediaMetaData>
 #include <QLabel>
-#include "drawarea.h"
-#include "mywidget.h"
-#include "image.h"
 
 #include <QtWidgets>
 #include <QMediaPlayer>
@@ -21,6 +22,7 @@
 #include <QPainter>
 #include <QPoint>
 
+using namespace QtConcurrent;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,61 +35,33 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox->addItem("Dinosaur");
     ui->comboBox->addItem("Dinosaur2");
 
-//    QPainter painter(this);
-//    painter.setPen(QPen(Qt::blue, 2, Qt::SolidLine, Qt::RoundCap,
-//                        Qt::RoundJoin));
-//    QRect rect = QRect(QPoint(10, 180), QPoint(10 + 50, 180 + 50));
-//    painter.drawRect(rect);
+    ui->primaryNextFramesButton->setEnabled(false);
+    ui->primaryPrevFramesButton->setEnabled(false);
+    ui->secondaryNextFramesButton->setEnabled(false);
+    ui->secondaryPrevFramesButton->setEnabled(false);
 
-    // Create left layout
-//    QWidget* m_myWidget = new QWidget;
-//    m_myWidget->setGeometry(0, 200, 200, 200);
-//    m_myWidget->setStyleSheet("background-color:black;");
-//    m_myWidget->show();
-//    this->layout()->addWidget(m_myWidget);
-
-
-//    this->layout()->addWidget(m_myWidget);
+    ui->primaryVideoProgressBar->setValue(0);
+    ui->primaryVideoProgressBar->hide();
+    ui->secondaryVideoProgressBar->setValue(0);
+    ui->secondaryVideoProgressBar->hide();
 
     graphicsView = new MyGraphicsView(this);
     graphicsView->setGeometry(10, 180, 10 + 352, 180 + 288);
     graphicsView->resize(352, 288);
     this->layout()->addWidget(graphicsView);
 
-
     graphicsView2 = new MyGraphicsView(this);
     graphicsView2->setGeometry(352 + 20, 180, 10 + 352, 180 + 288);
     graphicsView2->resize(352, 288);
     this->layout()->addWidget(graphicsView2);
 
-//    DrawArea* drawArea = new DrawArea;
-//    drawArea->setGeometry(10, 180, 10 + 352, 180 + 288);
-//    drawArea->setStyleSheet("border:1px solid rgb(0, 255, 0);background-color: rgba(0, 0, 0, 0);");
-//    drawArea->resize(352, 288/2);
-
-//    this->layout()->addWidget(drawArea);
-
-    // Create players
-    MyPlayer* player1 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmOne.avi", 1);
-//    ui->gridLayout->addWidget(player1->m_videoWidget);
-//    this->layout()->addWidget(player1->m_videoWidget);
-
-//    QLabel* myLabel = new QLabel("My Label");
-//    QWidget* myWidget = new mywidget;
-//    myWidget->setGeometry(10, 180, 352, 288);
-//    this->layout()->addWidget(myWidget);
-
-//    ui->gridLayout->addWidget(myWidget, 0, 0);
-//    ui->gridLayout->addWidget(myLabel, 0, 0);
-
-    //MyPlayer* player2 = new MyPlayer("C:/Users/Webber Wang/Downloads/AIFilmTwo.avi", 2);
-    //this->layout()->addWidget(player2->m_videoWidget);
-
+    primList = QList<QImage>();
+    secList = QList<QImage>();
 
     // Connect sliders to function
     connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this, SLOT(on_sliderLeft_changed()));
     connect(ui->horizontalSliderRight, SIGNAL(valueChanged(int)), this, SLOT(on_sliderRight_changed()));
-
+    // Connect import buttons
     connect(ui->importPrimaryButton, SIGNAL(clicked()), this, SLOT(import()));
     connect(ui->importSecondaryButton, SIGNAL(clicked()), this, SLOT(import()));
     resize(960, 640);
@@ -101,46 +75,36 @@ MainWindow::~MainWindow()
 void MainWindow::on_sliderLeft_changed()
 {
     qDebug() << "on slider left changed";
-    if(PrimaryUploadImages.size() == 0) { return; }
-
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(*PrimaryUploadImages.at(ui->horizontalSliderLeft->value())));
+    qDebug() << (segmentIndexPrimary*200) + ui->horizontalSliderLeft->value();
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(primList.at((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value())));
     graphicsView->scene->addItem(item);
-    ui->left_sliderLabel->setText(QString::number(ui->horizontalSliderLeft->value()));
+    ui->left_sliderLabel->setText(QString::number((segmentIndexPrimary*200) + ui->horizontalSliderLeft->value()));
 }
 
-void MainWindow::on_sliderRight_changed() {
-    qDebug() << "on slider right changed";
-    if(SecondaryUploadImages.size() == 0) { return; }
-
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(*SecondaryUploadImages.at(ui->horizontalSliderRight->value())));
-    graphicsView2->scene->addItem(item);
-    ui->right_sliderLabel->setText(QString::number(ui->horizontalSliderRight->value()));
-}
-
-void MainWindow::import()
+void MainWindow::on_sliderRight_changed()
 {
-    QFileDialog upload(this);
-    upload.setFileMode(QFileDialog::Directory);
-    upload.setAcceptMode(QFileDialog::AcceptOpen);
-    upload.setWindowTitle("Import Files");
-    upload.exec();
+    qDebug() << "on slider right changed";
+    qDebug() << (segmentIndexSecondary*200) + ui->horizontalSliderRight->value();
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(secList.at((segmentIndexSecondary*200) + ui->horizontalSliderRight->value())));
+    graphicsView2->scene->addItem(item);
+    ui->right_sliderLabel->setText(QString::number((segmentIndexSecondary*200) + ui->horizontalSliderRight->value()));
+}
 
-    std::string directoryPath = upload.directory().path().toStdString();
-    QDir directory(upload.directory().path());
-    QStringList imageFileNames = directory.entryList(QStringList() << "*.rgb", QDir::Files);
-
+void imageLoading(QStringList imageFileNames,
+                              QStringList constStrs,
+                              QList<QImage> *images,
+                              QStringList *fileNames,
+                              QStringList *fileNamesPrev)
+{
     int count = 0;
-
-    QString caller = QObject::sender()->objectName();
-    qDebug() << caller;
     foreach(QString filename, imageFileNames)
     {
-        if(count > 200)
+        if(count > 1000)
         {
             continue;
         }
 
-        QString filePath = upload.directory().path() + "/" + filename;
+        QString filePath = constStrs.at(0) + "/" + filename;
         QFile file(filePath);
         if(!file.open(QFile::ReadOnly))
         {
@@ -162,10 +126,157 @@ void MainWindow::import()
             pixels[i] = qRgb(pixel1,pixel2,pixel3);
         }
 
-        caller == "importPrimaryButton" ? PrimaryUploadImages.push_back(new QImage(img)) : SecondaryUploadImages.push_back(new QImage(img));
+        img = img.convertToFormat(QImage::Format_RGB444);//Format_Indexed8 //Format_RGB16
+        images->push_back(img);
+
+        qDebug() << "reached";
+
+        if(constStrs.at(1) == "primaryNextFramesButton" || constStrs.at(1) == "secondaryNextFramesButton" || constStrs.at(1) == "importPrimaryButton" || constStrs.at(1) == "importSecondaryButton"){
+            fileNamesPrev->append(filename);
+            fileNames->removeFirst();
+        }
+        else{
+            QString s = fileNamesPrev->last();
+            fileNamesPrev->prepend(s);
+            fileNames->removeLast();
+        }
         count++;
+        qDebug() << filename;
     }
-    qDebug() << PrimaryUploadImages.size();
-    qDebug() << SecondaryUploadImages.size();
-    qDebug() << "DONE Loading!";
+}
+
+void MainWindow::import()
+{
+    PrimaryUploadImages.clear();
+    SecondaryUploadImages.clear();
+
+    QFileDialog upload(this);
+    upload.setFileMode(QFileDialog::Directory);
+    upload.setAcceptMode(QFileDialog::AcceptOpen);
+    upload.setWindowTitle("Import Files");
+    upload.exec();
+
+    QString directoryPath = upload.directory().path();
+    QDir directory(upload.directory().path());
+    QStringList imageFileNames = directory.entryList(QStringList() << "*.rgb", QDir::Files);
+
+    QString caller = QObject::sender()->objectName();
+
+    caller == "importPrimaryButton" ?
+                ui->primaryVideoProgressBar->show() :
+                ui->secondaryVideoProgressBar->show();
+
+    if(caller == "importPrimaryButton")
+    {
+        numberImageFilesPrimary = imageFileNames.size();
+        staticConstStringsPrimary.append(directoryPath);
+        staticConstStringsPrimary.append(caller);
+        primaryFileNames_n = imageFileNames;
+        QFuture<void> f1 = run(imageLoading, primaryFileNames_n, staticConstStringsPrimary, &primList, &primaryFileNames_n, &primaryFileNames_p);
+        f1.waitForFinished();
+    }
+    else
+    {
+        numberImageFilesSecondary = imageFileNames.size();
+        staticConstStringsSecondary.append(directoryPath);
+        staticConstStringsSecondary.append(caller);
+        secondaryFileNames_n = imageFileNames;
+        QFuture<void> f2 = run(imageLoading, secondaryFileNames_n, staticConstStringsSecondary, &secList, &secondaryFileNames_n, &secondaryFileNames_p);
+        f2.waitForFinished();
+    }
+
+    caller == "importPrimaryButton" ? ui->primaryNextFramesButton->setEnabled(true) :  ui->secondaryNextFramesButton->setEnabled(true);
+    qDebug() << "Done Loading!";
+}
+
+void MainWindow::on_primaryNextFramesButton_clicked()
+{
+    if(primaryFileNames_n.size() != 0)
+    {
+        ui->primaryPrevFramesButton->setEnabled(true);
+    }
+
+    qDebug() << ((segmentIndexPrimary+2)*200);
+
+    if((((segmentIndexPrimary+1)*200)) >= 1000)
+    {
+        QString caller = QObject::sender()->objectName();
+        staticConstStringsPrimary[1] = caller;
+        primList.clear();
+        segmentIndexPrimary = 0;
+        QFuture<void> loadNext = run(imageLoading, primaryFileNames_n, staticConstStringsPrimary, &primList, &primaryFileNames_n, &primaryFileNames_p);
+        loadNext.waitForFinished();
+    }
+    else if(primaryFileNames_p.size() == numberImageFilesPrimary)
+    {
+        ui->primaryNextFramesButton->setEnabled(false);
+    }
+    else{
+        segmentIndexPrimary++;
+    }
+}
+
+void MainWindow::on_secondaryNextFramesButton_clicked()
+{
+    if(secondaryFileNames_n.size() != 0)
+    {
+        ui->secondaryPrevFramesButton->setEnabled(true);
+    }
+    if((((segmentIndexSecondary+1)*200)) >= 1000)
+    {
+        QString caller = QObject::sender()->objectName();
+        staticConstStringsSecondary[1] = caller;
+        secList.clear();
+        segmentIndexSecondary = 0;
+        QFuture<void> loadNext = run(imageLoading, secondaryFileNames_n, staticConstStringsSecondary, &secList, &secondaryFileNames_n, &secondaryFileNames_p);
+        loadNext.waitForFinished();
+    }
+    else if(secondaryFileNames_p.size() == numberImageFilesSecondary)
+    {
+        ui->secondaryNextFramesButton->setEnabled(false);
+    }
+    else{
+        segmentIndexSecondary++;
+    }
+}
+
+void MainWindow::on_primaryPrevFramesButton_clicked()
+{
+    if(primaryFileNames_p.size() == 0)
+    {
+        ui->primaryPrevFramesButton->setEnabled(false);
+    }
+
+    if(segmentIndexPrimary == 0)
+    {
+        QString caller = QObject::sender()->objectName();
+        staticConstStringsPrimary[1] = caller;
+        primList.clear();
+        segmentIndexPrimary = (1000/200 - 1);
+        QFuture<void> loadNext = run(imageLoading, primaryFileNames_p, staticConstStringsPrimary, &primList, &primaryFileNames_p, &primaryFileNames_n);
+        loadNext.waitForFinished();
+    }
+    else{
+        segmentIndexPrimary--;
+    }
+}
+
+void MainWindow::on_secondaryPrevFramesButton_clicked()
+{
+    if(secondaryFileNames_p.size() == 0)
+    {
+        ui->secondaryPrevFramesButton->setEnabled(false);
+    }
+    if(segmentIndexSecondary == 0)
+    {
+        QString caller = QObject::sender()->objectName();
+        staticConstStringsSecondary[1] = caller;
+        secList.clear();
+        segmentIndexSecondary = (1000/200 - 1);
+        QFuture<void> loadNext = run(imageLoading, secondaryFileNames_p, staticConstStringsSecondary, &secList, &secondaryFileNames_p, &secondaryFileNames_n);
+        loadNext.waitForFinished();
+    }
+    else{
+        segmentIndexSecondary--;
+    }
 }
