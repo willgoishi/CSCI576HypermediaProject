@@ -1,4 +1,5 @@
 #include "myplaylist.h"
+#include "qmediaplaylist.h"
 
 MyPlaylist::MyPlaylist()
 {

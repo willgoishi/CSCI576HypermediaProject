@@ -53,6 +53,7 @@ private slots:
   void on_playerPlay_clicked();
   void on_playerPause_clicked();
   void on_playerStop_clicked();
+  void on_playerStatusChanged(QMediaPlayer::MediaStatus);
 
 private:
   void imageLoading(QStringList imageFileNames, QStringList constStrs,
@@ -68,6 +69,7 @@ private:
   MyVideo *primaryVideo;
   MyVideo *secondaryVideo;
   // Used for playing
+  QMediaPlayer *videoPlayer;
   MyPlaylist *playerPlaylist;
   MyVideo *playerVideo;
 

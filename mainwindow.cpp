@@ -67,6 +67,10 @@ MainWindow::MainWindow(QWidget *parent)
   secList = QVector<QImage>();
   playerList = QVector<QImage>();
 
+  //Video Player
+  videoPlayer = new QMediaPlayer(this, QMediaPlayer::VideoSurface);
+  videoPlayer->setAudioRole(QAudio::VideoRole);
+
   // Connect sliders to function
   connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this,
           SLOT(on_sliderLeft_changed(int)));
@@ -234,6 +238,7 @@ void MainWindow::tabSelected(int tab) {
 
     // Load data
 
+
     // Get path
     QString filepath = qApp->applicationDirPath() + "/data.json";
     //        qDebug() << filepath;
@@ -243,6 +248,9 @@ void MainWindow::tabSelected(int tab) {
 
     // Create playlist, add video at end of loop
     playerPlaylist = new MyPlaylist();
+
+
+    if(jsonArray.size() == 0) {return;}
 
     foreach (const QJsonValue &v, jsonArray) {
 
@@ -343,19 +351,68 @@ void MainWindow::tabSelected(int tab) {
     qDebug() << videoTitle;
     importWithDirPath(directoryPath, "videoPlayer");
 
+    playerPlaylist->addVideo(primaryVideo);
+    //videoPlayer->setPlaylist(playerPlaylist);
+    videoPlayer->setMedia(QUrl::fromLocalFile(directoryPath));
+
+
   } else {
     graphicsViewPrimary->show();
     graphicsViewSecondary->show();
   }
 }
 
-void MainWindow::on_playerPlay_clicked() { qDebug() << "Player play clicked"; }
-
-void MainWindow::on_playerPause_clicked() {
-  qDebug() << "Player pause clicked";
+void MainWindow::on_playerPlay_clicked()
+{
+    qDebug() << "Player play clicked";
+    switch(videoPlayer->state())
+    {
+        case QMediaPlayer::PlayingState:
+            videoPlayer->pause();
+            break;
+        default:
+            videoPlayer->play();
+            break;
+    }
 }
 
-void MainWindow::on_playerStop_clicked() { qDebug() << "Player stop clicked"; }
+void MainWindow::on_playerPause_clicked()
+{
+    qDebug() << "Player pause clicked";
+    switch(videoPlayer->state())
+    {
+        case QMediaPlayer::PausedState:
+            videoPlayer->play();
+            break;
+        default:
+            videoPlayer->pause();
+            break;
+    }
+}
+
+void MainWindow::on_playerStop_clicked()
+{
+    qDebug() << "Player stop clicked";
+    if(videoPlayer->state() == QMediaPlayer::PlayingState || videoPlayer->state() == QMediaPlayer::PausedState)
+    {
+        videoPlayer->stop();
+    }
+}
+
+void MainWindow::on_playerStatusChanged(QMediaPlayer::MediaStatus status)
+{
+    switch(status)
+    {
+        case QMediaPlayer::EndOfMedia:
+            videoPlayer->stop();
+            break;
+        case QMediaPlayer::InvalidMedia:
+            //setLabelInfo(videoPlayer->errorString());
+            break;
+        default:
+            break;
+    }
+}
 
 void MainWindow::saveJson(QJsonDocument document, QString fileName) {
   QFile jsonFile(fileName);
@@ -523,7 +580,6 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
     f2.waitForFinished();
 
   } else if (caller == "videoPlayer") {
-
     //
     // Import
     //
