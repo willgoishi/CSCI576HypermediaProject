@@ -404,6 +404,7 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
   int count = 0;
   foreach (QString filename, imageFileNames) {
 
+      
     ui->primaryVideoProgressBar->setValue(count);
 
     if (count > SEGMENT_LENGTH_TOTAL) {

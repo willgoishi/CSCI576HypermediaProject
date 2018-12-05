@@ -57,6 +57,10 @@ private slots:
   void on_playerStop_clicked();
 
 private:
+  void imageLoading(QStringList imageFileNames, QStringList constStrs,
+                    QVector<QImage> *images, QStringList *fileNames,
+                    QStringList *fileNamesPrev);
+
   Ui::MainWindow *ui;
   MyGraphicsView *graphicsViewPrimary;
   MyGraphicsView *graphicsViewSecondary;
@@ -81,8 +85,8 @@ private:
   size_t numberImageFilesPrimary;
   size_t numberImageFilesSecondary;
 
-  QList<QImage> primList;
-  QList<QImage> secList;
+  QVector<QImage> primList;
+  QVector<QImage> secList;
 
   QString primaryVideoFilePath;
   QStringList primaryFileNames_n;
