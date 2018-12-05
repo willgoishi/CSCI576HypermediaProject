@@ -10,6 +10,11 @@
 MyGraphicsView::MyGraphicsView(MyPlaylist myPlaylist, int graphicsLocation,
                                int videoId, QWidget *parent)
     : QGraphicsView(parent), rubberBand(nullptr) {
+
+  // Set scene
+  scene = new QGraphicsScene(this);
+  this->setScene(scene);
+
   this->myPlaylist = myPlaylist;
   this->currentVideoId = videoId;
   this->graphicsLocation = graphicsLocation;
@@ -123,7 +128,7 @@ void MyGraphicsView::updateBoundary(int frameId) {
 void MyGraphicsView::clearBoundary() {
   qDebug() << "clearBoundary()";
 
-  scene = new QGraphicsScene(this);
+  //  scene = new QGraphicsScene(this);
   this->setScene(scene);
   this->viewport()->update();
 
@@ -137,13 +142,15 @@ void MyGraphicsView::showBoundary(QGraphicsRectItem *boundary, int linkId) {
 
   if (!scene) {
     scene = new QGraphicsScene(this);
+    this->setScene(scene);
   }
-  this->setScene(scene);
   scene->addRect(boundary->rect(), QPen(linkColorMap[linkId]));
 
-  QList<QGraphicsItem *> items = scene->items();
+  qDebug() << "after showBoundary()";
 
-  foreach (QGraphicsItem *item, items) { qDebug() << "Item!"; }
+  //  QList<QGraphicsItem *> items = scene->items();
+
+  //  foreach (QGraphicsItem *item, items) { qDebug() << "Item!"; }
 }
 
 void MyGraphicsView::updateCurrentLink(int linkId) {
