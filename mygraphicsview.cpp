@@ -89,9 +89,9 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
 void MyGraphicsView::paintEvent(QPaintEvent *ev) {
   //  qDebug() << "paintEvent()";
 
-  if (graphicsLocation == SECONDARY_LOCATION) {
-    return;
-  }
+  //  if (graphicsLocation == SECONDARY_LOCATION) {
+  //    return;
+  //  }
 
   QGraphicsView::paintEvent(ev);
 }
@@ -107,6 +107,10 @@ void MyGraphicsView::updateBoundary(int frameId) {
   currentFrame = frameId;
 
   clearBoundary();
+
+  if (graphicsLocation == SECONDARY_LOCATION) {
+    return;
+  }
 
   // Check if boundary exists for current frame
   video = myPlaylist.getVideo(currentVideoId);
@@ -132,9 +136,16 @@ void MyGraphicsView::clearBoundary() {
   qDebug() << "clearBoundary()";
 
   scene = new QGraphicsScene(this);
-  if (pixMapPrim) {
+
+  if (pixMapPrim && graphicsLocation == PRIMARY_LOCATION) {
+    qDebug() << "Primary clearBoundary()";
     scene->addItem(pixMapPrim);
   }
+  if (pixMapSec && graphicsLocation == SECONDARY_LOCATION) {
+    qDebug() << "Secondary clearBoundary()";
+    scene->addItem(pixMapSec);
+  }
+
   this->setScene(scene);
 
   if (rubberBand) {

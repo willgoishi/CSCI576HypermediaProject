@@ -26,8 +26,8 @@ public:
   void showBoundary(QGraphicsRectItem *boundary, int linkId);
   void updateCurrentLink(int linkId);
   // Keep original copy so we can replace scene when updating boundaries
-  QGraphicsScene *rawScene;
   QGraphicsPixmapItem *pixMapPrim;
+  QGraphicsPixmapItem *pixMapSec;
   QGraphicsScene *scene;
 
 protected:

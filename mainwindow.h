@@ -45,10 +45,10 @@ private slots:
   void saveJson(QJsonDocument document, QString fileName);
   QJsonDocument loadJson(QString fileName);
   void import();
-  void on_primaryNextFramesButton_clicked();
-  void on_secondaryNextFramesButton_clicked();
-  void on_primaryPrevFramesButton_clicked();
-  void on_secondaryPrevFramesButton_clicked();
+  //  void on_primaryNextFramesButton_clicked();
+  //  void on_secondaryNextFramesButton_clicked();
+  //  void on_primaryPrevFramesButton_clicked();
+  //  void on_secondaryPrevFramesButton_clicked();
 
   // Player
   void tabSelected(int);

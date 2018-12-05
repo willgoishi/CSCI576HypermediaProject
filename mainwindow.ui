@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>790</width>
-    <height>741</height>
+    <width>765</width>
+    <height>690</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,22 +153,6 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="horizontalSliderRight">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>500</y>
-        <width>351</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="maximum">
-       <number>200</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
      <widget class="QLabel" name="frameLabelLeft">
       <property name="geometry">
        <rect>
@@ -222,9 +206,12 @@
       </property>
      </widget>
      <widget class="QPushButton" name="primaryPrevFramesButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>20</x>
         <y>520</y>
         <width>151</width>
         <height>32</height>
@@ -235,6 +222,9 @@
       </property>
      </widget>
      <widget class="QPushButton" name="primaryNextFramesButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -250,9 +240,9 @@
      <widget class="QProgressBar" name="primaryVideoProgressBar">
       <property name="geometry">
        <rect>
-        <x>120</x>
+        <x>17</x>
         <y>560</y>
-        <width>118</width>
+        <width>341</width>
         <height>23</height>
        </rect>
       </property>
@@ -264,6 +254,9 @@
       </property>
      </widget>
      <widget class="QPushButton" name="secondaryPrevFramesButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>360</x>
@@ -277,6 +270,9 @@
       </property>
      </widget>
      <widget class="QPushButton" name="secondaryNextFramesButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>570</x>
@@ -292,14 +288,33 @@
      <widget class="QProgressBar" name="secondaryVideoProgressBar">
       <property name="geometry">
        <rect>
-        <x>480</x>
+        <x>370</x>
         <y>560</y>
-        <width>118</width>
+        <width>351</width>
         <height>23</height>
        </rect>
       </property>
+      <property name="maximum">
+       <number>9000</number>
+      </property>
       <property name="value">
-       <number>24</number>
+       <number>0</number>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSliderRight">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>500</y>
+        <width>351</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>9000</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </widget>
@@ -380,7 +395,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>790</width>
+     <width>765</width>
      <height>22</height>
     </rect>
    </property>
