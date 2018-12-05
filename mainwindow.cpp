@@ -20,7 +20,7 @@
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 1000 // Max to load
+#define TOTAL_FRAMES 99 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
    */
   QString videoTitle = "First Video";
   primaryVideo = new MyVideo(videoTitle);
-  for (int i = 0; i < TOTAL_FRAMES; i++) {
+  for (int i = 0; i <= TOTAL_FRAMES; i++) {
 
     // Constructor for video
     int frameCount = i;
@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
    */
   videoTitle = "Second Video";
   secondaryVideo = new MyVideo(videoTitle);
-  for (int i = 0; i < TOTAL_FRAMES; i++) {
+  for (int i = 0; i <= TOTAL_FRAMES; i++) {
 
     // Constructor for video
     int frameCount = i;
@@ -126,13 +126,13 @@ void MainWindow::on_sliderLeft_changed(int currentPrimaryFrame) {
 
   // Update boundaries
   ui->frameCountLeft->setText(QString::number(currentPrimaryFrame));
-  //  graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
 
   pixMapPrim = new QGraphicsPixmapItem(
       QPixmap::fromImage(primList.at(currentPrimaryFrame)));
 
   graphicsViewPrimary->scene->addItem(pixMapPrim);
   graphicsViewPrimary->pixMapPrim = pixMapPrim;
+  graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
 }
 
 void MainWindow::on_sliderRight_changed(int currentSecondaryFrame) {
@@ -172,6 +172,7 @@ void MainWindow::on_selectLinks_changed(int index) {
 
   if (primaryVideo->hasFirstFrameWithBoundaryFromLinkId(currentLinkId)) {
     ui->horizontalSliderLeft->setValue(frameIndex);
+    ui->horizontalSliderLeft->update();
   }
 
   qDebug() << "1st frame for linkId:" << currentLinkId << " is " << frameIndex;
@@ -370,15 +371,17 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
   int count = 0;
   foreach (QString filename, imageFileNames) {
 
+    if (count > TOTAL_FRAMES) {
+      break;
+    }
+
     if (constStrs[2] == "primary") {
       ui->primaryVideoProgressBar->setValue(count);
+      ui->primaryVideoProgressBar->update();
     }
     if (constStrs[2] == "secondary") {
       ui->secondaryVideoProgressBar->setValue(count);
-    }
-
-    if (count > TOTAL_FRAMES) {
-      break;
+      ui->secondaryVideoProgressBar->update();
     }
 
     QString filePath = constStrs.at(0) + "/" + filename;

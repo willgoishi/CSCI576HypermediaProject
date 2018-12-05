@@ -34,8 +34,8 @@ protected:
   void mouseMoveEvent(QMouseEvent *ev);
   void mousePressEvent(QMouseEvent *ev);
   void mouseReleaseEvent(QMouseEvent *ev);
-  void paintEvent(QPaintEvent *ev);
-  void debugCoord(QString name, QPoint point);
+  //  void paintEvent(QPaintEvent *ev);
+  //  void debugCoord(QString name, QPoint point);
 
 private:
   QRubberBand *rubberBand;

@@ -29,7 +29,7 @@ void MyGraphicsView::mousePressEvent(QMouseEvent *ev) {
 
   start = ev->pos();
 
-  debugCoord("Start", start);
+  //  debugCoord("Start", start);
 
   if (!rubberBand)
     rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
@@ -46,7 +46,7 @@ void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev) {
   }
 
   end = ev->pos();
-  debugCoord("End", end);
+  //  debugCoord("End", end);
 
   QRect rubberBandRect = QRect(start, end).normalized();
   rubberBand->setGeometry(rubberBandRect);
@@ -79,6 +79,8 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
     MyVideo *video = myPlaylist.getVideo(currentVideoId);
     QGraphicsRectItem *boundary = new QGraphicsRectItem(rect);
 
+    qDebug() << "Current frame: " << currentFrame;
+
     video->addBoundary(currentFrame, currentLinkId, boundary);
 
     updateBoundary(currentFrame);
@@ -86,36 +88,37 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
   QGraphicsView::mouseReleaseEvent(ev);
 }
 
-void MyGraphicsView::paintEvent(QPaintEvent *ev) {
-  //  qDebug() << "paintEvent()";
+// void MyGraphicsView::paintEvent(QPaintEvent *ev) {
+//  //  qDebug() << "paintEvent()";
 
-  //  if (graphicsLocation == SECONDARY_LOCATION) {
-  //    return;
-  //  }
+//  //  if (graphicsLocation == SECONDARY_LOCATION) {
+//  //    return;
+//  //  }
 
-  QGraphicsView::paintEvent(ev);
-}
+//  QGraphicsView::paintEvent(ev);
+//}
 
-void MyGraphicsView::debugCoord(QString name, QPoint point) {
-  //    qDebug() << name << " point: (" << point.x() << ", " << point.y() <<
-  //    ")";
-}
+// void MyGraphicsView::debugCoord(QString name, QPoint point) {
+//  qDebug() << name << " point: (" << point.x() << ", " << point.y() << ")";
+//}
 
 void MyGraphicsView::updateBoundary(int frameId) {
-  qDebug() << "updateBoundary()";
+  if (graphicsLocation == SECONDARY_LOCATION) {
+    return;
+  }
+
+  qDebug() << "updateBoundary() " << frameId;
 
   currentFrame = frameId;
 
   clearBoundary();
 
-  if (graphicsLocation == SECONDARY_LOCATION) {
-    return;
-  }
-
   // Check if boundary exists for current frame
   video = myPlaylist.getVideo(currentVideoId);
 
   videoFrame = video->getFrame(currentFrame);
+
+  qDebug() << "currentFrame: " << currentFrame;
 
   // Loop for each link
   QMapIterator<int, QGraphicsRectItem *> i(videoFrame->getLinks());
