@@ -131,10 +131,10 @@ MainWindow::~MainWindow() { delete ui; }
 void MainWindow::on_sliderLeft_changed(int value) {
   qDebug() << "currentPrimaryFrame = " << value;
 
+  currentPrimaryFrame = value;
+
   // Update boundaries
   ui->frameCountLeft->setText(QString::number(value));
-  currentPrimaryFrame = value;
-  graphicsViewPrimary->updateScene(currentPrimaryFrame);
 
   if ((segmentIndexPrimary * 200) + ui->horizontalSliderLeft->value() >=
       primList.size()) {
@@ -145,6 +145,8 @@ void MainWindow::on_sliderLeft_changed(int value) {
   pixMapPrim = new QGraphicsPixmapItem(QPixmap::fromImage(primList.at(
       (segmentIndexPrimary * 200) + ui->horizontalSliderLeft->value())));
   graphicsViewPrimary->scene->addItem(pixMapPrim);
+  //  graphicsViewPrimary->scene->addRect(QRectF(0, 0, 150, 150));
+  graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
   graphicsViewPrimary->pixMapPrim = pixMapPrim;
   ui->frameCountLeft->setText(QString::number(
       (segmentIndexPrimary * 200) + ui->horizontalSliderLeft->value()));
