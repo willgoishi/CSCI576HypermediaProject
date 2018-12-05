@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "image.h"
 #include "mygraphicsview.h"
-#include "myplayer.h"
+//#include "myplayer.h"
 #include "ui_mainwindow.h"
 #include <QtConcurrent/qtconcurrentrun.h>
 
@@ -131,19 +131,21 @@ MainWindow::~MainWindow() { delete ui; }
 void MainWindow::on_sliderLeft_changed(int value) {
   qDebug() << "currentPrimaryFrame = " << value;
 
+  // Update boundaries
   ui->frameCountLeft->setText(QString::number(value));
   currentPrimaryFrame = value;
-  graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
+  graphicsViewPrimary->updateScene(currentPrimaryFrame);
 
   if ((segmentIndexPrimary * 200) + ui->horizontalSliderLeft->value() >=
       primList.size()) {
     return;
   }
 
-  // qDebug() << "on slider left changed";
+  qDebug() << "on slider left changed";
   pixMapPrim = new QGraphicsPixmapItem(QPixmap::fromImage(primList.at(
       (segmentIndexPrimary * 200) + ui->horizontalSliderLeft->value())));
   graphicsViewPrimary->scene->addItem(pixMapPrim);
+  graphicsViewPrimary->pixMapPrim = pixMapPrim;
   ui->frameCountLeft->setText(QString::number(
       (segmentIndexPrimary * 200) + ui->horizontalSliderLeft->value()));
 }

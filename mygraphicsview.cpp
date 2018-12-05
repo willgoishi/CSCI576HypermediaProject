@@ -78,6 +78,7 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
 
     MyVideo *video = myPlaylist.getVideo(currentVideoId);
     QGraphicsRectItem *boundary = new QGraphicsRectItem(rect);
+
     video->addBoundary(currentFrame, currentLinkId, boundary);
 
     updateBoundary(currentFrame);
@@ -86,6 +87,8 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
 }
 
 void MyGraphicsView::paintEvent(QPaintEvent *ev) {
+  //  qDebug() << "paintEvent()";
+
   if (graphicsLocation == SECONDARY_LOCATION) {
     return;
   }
@@ -98,8 +101,55 @@ void MyGraphicsView::debugCoord(QString name, QPoint point) {
   //    ")";
 }
 
+void MyGraphicsView::updateScene(int frameId) {
+  qDebug() << "updateScene()";
+
+  currentFrame = frameId;
+
+  // Create new scene from pixel map pointer
+  scene = new QGraphicsScene(this);
+  this->setScene(scene);
+  if (pixMapPrim) {
+    scene->addItem(pixMapPrim);
+  }
+
+  // Hide if visible
+  if (rubberBand) {
+    rubberBand->hide();
+  }
+
+  //
+  // Add rect to scene
+  //
+  video = myPlaylist.getVideo(currentVideoId);
+  videoFrame = video->getFrame(currentFrame);
+  QMapIterator<int, QGraphicsRectItem *> i(videoFrame->getLinks());
+  while (i.hasNext()) {
+    i.next();
+    qDebug() << i.key() << ": " << i.value()->rect();
+
+    int linkId = i.key();
+
+    if (videoFrame->hasBoundary(linkId)) {
+      videoBoundary = videoFrame->getBoundary(linkId);
+      scene->addRect(videoBoundary->rect(), QPen(linkColorMap[linkId]));
+      //      rectItem->setVisible(true);
+      //      rectItem->update();
+      qDebug() << "Added boundary id: " << linkId;
+    }
+  }
+
+  //
+  // Update scene
+  //
+  scene->update();
+  //  this->setScene(scene);
+  this->viewport()->update();
+  //  this->update();
+}
+
 void MyGraphicsView::updateBoundary(int frameId) {
-  qDebug() << "Update boundary";
+  qDebug() << "updateBoundary()";
 
   currentFrame = frameId;
 
@@ -128,9 +178,12 @@ void MyGraphicsView::updateBoundary(int frameId) {
 void MyGraphicsView::clearBoundary() {
   qDebug() << "clearBoundary()";
 
-  //  scene = new QGraphicsScene(this);
+  scene = new QGraphicsScene(this);
+  if (pixMapPrim) {
+    scene->addItem(pixMapPrim);
+  }
   this->setScene(scene);
-  this->viewport()->update();
+  //  this->viewport()->update();
 
   if (rubberBand) {
     rubberBand->hide();
@@ -140,13 +193,15 @@ void MyGraphicsView::clearBoundary() {
 void MyGraphicsView::showBoundary(QGraphicsRectItem *boundary, int linkId) {
   qDebug() << "showBoundary()";
 
-  if (!scene) {
-    scene = new QGraphicsScene(this);
-    this->setScene(scene);
-  }
-  scene->addRect(boundary->rect(), QPen(linkColorMap[linkId]));
+  //  if (!scene) {
+  //    scene = new QGraphicsScene(this);
+  //    this->setScene(scene);
+  //  }
 
-  qDebug() << "after showBoundary()";
+  scene->addRect(boundary->rect(), QPen(linkColorMap[linkId]));
+  //  scene->addItem(boundary->rect());
+  //  this->setScene(scene);
+  //  this->viewport()->update();
 
   //  QList<QGraphicsItem *> items = scene->items();
 

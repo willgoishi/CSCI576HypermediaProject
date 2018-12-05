@@ -29,7 +29,7 @@ SOURCES += \
     mainwindow.cpp \
     mygraphicsview.cpp \
     image.cpp \
-    myplayer.cpp \
+#    myplayer.cpp \
     myvideo.cpp \
     myframe.cpp \
     myplaylist.cpp
@@ -37,7 +37,7 @@ HEADERS += \
     mainwindow.h \
     mygraphicsview.h \
     image.h \
-    myplayer.h \
+#    myplayer.h \
     myframe.h \
     myvideo.h \
     myplaylist.h
