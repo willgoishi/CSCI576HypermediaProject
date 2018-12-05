@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>757</width>
-    <height>612</height>
+    <width>790</width>
+    <height>741</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>741</width>
-      <height>561</height>
+      <width>761</width>
+      <height>621</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -30,7 +30,7 @@
      <attribute name="title">
       <string>HyperLink Tool</string>
      </attribute>
-     <widget class="QPushButton" name="importPrimaryVideo">
+     <widget class="QPushButton" name="importPrimaryButton">
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -56,7 +56,7 @@
        <string>Actions: </string>
       </property>
      </widget>
-     <widget class="QPushButton" name="importPrimaryVideo_2">
+     <widget class="QPushButton" name="importSecondaryButton">
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -215,6 +215,84 @@
        <string>0</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="primaryPrevFramesButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>520</y>
+        <width>151</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Prev 200 frames</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="primaryNextFramesButton">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>520</y>
+        <width>151</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Next 200 frames</string>
+      </property>
+     </widget>
+     <widget class="QProgressBar" name="primaryVideoProgressBar">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>560</y>
+        <width>118</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>24</number>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="secondaryPrevFramesButton">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>520</y>
+        <width>151</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Prev 200 frames</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="secondaryNextFramesButton">
+      <property name="geometry">
+       <rect>
+        <x>570</x>
+        <y>520</y>
+        <width>151</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Next 200 frames</string>
+      </property>
+     </widget>
+     <widget class="QProgressBar" name="secondaryVideoProgressBar">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>560</y>
+        <width>118</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>24</number>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -293,7 +371,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>757</width>
+     <width>790</width>
      <height>22</height>
     </rect>
    </property>

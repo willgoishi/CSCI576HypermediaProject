@@ -26,6 +26,7 @@ public:
     void clearBoundary();
     void showBoundary(QGraphicsRectItem* boundary, int linkId);
     void updateCurrentLink(int linkId);
+    QGraphicsScene *scene;
 
 protected:
     void mouseMoveEvent(QMouseEvent *ev);
@@ -40,7 +41,6 @@ private:
        QPoint end;
        QRectF rect;
        QRect lastRect;
-       QGraphicsScene *scene;
        QGraphicsRectItem *rectangle;
        MyVideo* video;
        MyPlaylist myPlaylist;
