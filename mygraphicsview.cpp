@@ -7,7 +7,7 @@
 #include "QtDebug"
 #include <QApplication>
 
-MyGraphicsView::MyGraphicsView(MyPlaylist myPlaylist, int graphicsLocation,
+MyGraphicsView::MyGraphicsView(MyPlaylist *&myPlaylist, int graphicsLocation,
                                int videoId, QWidget *parent)
     : QGraphicsView(parent), rubberBand(nullptr) {
 
@@ -66,7 +66,7 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
   if (releasePoint == start) {
 
     // Delete boundary
-    MyVideo *video = myPlaylist.getVideo(currentVideoId);
+    MyVideo *video = myPlaylist->getVideo(currentVideoId);
     MyFrame *frame = video->getFrame(currentFrame);
     frame->removeBoundary(currentLinkId);
     updateBoundary(currentFrame);
@@ -76,7 +76,7 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
     rect = QRectF(start, end).normalized();
     rubberBand->hide();
 
-    MyVideo *video = myPlaylist.getVideo(currentVideoId);
+    MyVideo *video = myPlaylist->getVideo(currentVideoId);
     QGraphicsRectItem *boundary = new QGraphicsRectItem(rect);
 
     qDebug() << "Current frame: " << currentFrame;
@@ -113,12 +113,14 @@ void MyGraphicsView::updateBoundary(int frameId) {
 
   clearBoundary();
 
+  qDebug() << "currentVideoId: " << currentVideoId;
+
   // Check if boundary exists for current frame
-  video = myPlaylist.getVideo(currentVideoId);
+  video = myPlaylist->getVideo(currentVideoId);
+
+  qDebug() << "current frame " << currentFrame;
 
   videoFrame = video->getFrame(currentFrame);
-
-  qDebug() << "currentFrame: " << currentFrame;
 
   // Loop for each link
   QMapIterator<int, QGraphicsRectItem *> i(videoFrame->getLinks());

@@ -323,6 +323,10 @@ void MainWindow::tabSelected(int tab) {
     this->layout()->addWidget(graphicsViewPlayer);
 
     // Import primary video
+//    qDebug() << myVideo->get
+//    importWithDirPath(directoryPath, caller);
+    
+    
 
   } else {
     graphicsViewPrimary->show();
@@ -472,22 +476,6 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
                           &primaryFileNames_n, &primaryFileNames_p);
 
   } else if (caller == "importSecondaryButton") {
-    /**
-     * Create 2nd video
-     * @brief videoTitle
-     */
-    secondaryVideo = new MyVideo(directoryPath);
-    for (int i = 0; i <= TOTAL_FRAMES; i++) {
-
-      // Constructor for video
-      int frameCount = i;
-
-      // Create node & append
-      MyFrame *frame = new MyFrame(frameCount, directoryPath);
-      secondaryVideo->addFrame(frame);
-    }
-    playlist->addVideo(secondaryVideo);
-
     //
     // Import
     //
@@ -503,5 +491,6 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
                           &secondaryFileNames_n, &secondaryFileNames_p);
 
   } else if (caller == "videoPlayer") {
+      
   }
 }

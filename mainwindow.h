@@ -45,6 +45,7 @@ private slots:
   void saveJson(QJsonDocument document, QString fileName);
   QJsonDocument loadJson(QString fileName);
   void import();
+  void importWithDirPath(QString directoryPath, QString caller);
   //  void on_primaryNextFramesButton_clicked();
   //  void on_secondaryNextFramesButton_clicked();
   //  void on_primaryPrevFramesButton_clicked();
@@ -64,12 +65,14 @@ private:
   Ui::MainWindow *ui;
   MyGraphicsView *graphicsViewPrimary;
   MyGraphicsView *graphicsViewSecondary;
+  MyGraphicsView *graphicsViewPlayer;
 
-  MyPlaylist playlist;
+  MyPlaylist *playlist;
   MyVideo *primaryVideo;
   MyVideo *secondaryVideo;
   // Used for playing
   MyPlaylist playerPlaylist;
+  MyVideo *playerVideo;
 
   int currentLinkId = 0;
   int currentPrimaryFrame = 0;   // Frame for left video

@@ -18,7 +18,7 @@ class MyGraphicsView : public QGraphicsView {
   Q_OBJECT
 
 public:
-  explicit MyGraphicsView(MyPlaylist myPlaylist, int graphicsLocation,
+  explicit MyGraphicsView(MyPlaylist *&myPlaylist, int graphicsLocation,
                           int videoId, QWidget *parent = nullptr);
   void updateBoundary(int frame);
   void updateScene(int frame);
@@ -45,7 +45,7 @@ private:
   QRect lastRect;
   QGraphicsRectItem *rectangle;
   MyVideo *video;
-  MyPlaylist myPlaylist;
+  MyPlaylist *myPlaylist;
   QMap<int, QColor> linkColorMap;
   MyFrame *videoFrame;
   QGraphicsRectItem *videoBoundary;
