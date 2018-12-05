@@ -28,6 +28,7 @@ public:
   // Keep original copy so we can replace scene when updating boundaries
   QGraphicsPixmapItem *pixMapPrim;
   QGraphicsPixmapItem *pixMapSec;
+  QGraphicsPixmapItem *pixMapPlayer;
   QGraphicsScene *scene;
 
 protected:

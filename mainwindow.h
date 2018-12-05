@@ -37,6 +37,7 @@ public:
 private slots:
   void on_sliderLeft_changed(int);
   void on_sliderRight_changed(int);
+  void on_sliderPlayer_valueChanged(int);
   void on_createNewHyperlink_clicked();
   void on_selectLinks_changed(int);
   void on_selectLinks_edited(QString);
@@ -46,10 +47,6 @@ private slots:
   QJsonDocument loadJson(QString fileName);
   void import();
   void importWithDirPath(QString directoryPath, QString caller);
-  //  void on_primaryNextFramesButton_clicked();
-  //  void on_secondaryNextFramesButton_clicked();
-  //  void on_primaryPrevFramesButton_clicked();
-  //  void on_secondaryPrevFramesButton_clicked();
 
   // Player
   void tabSelected(int);
@@ -71,7 +68,7 @@ private:
   MyVideo *primaryVideo;
   MyVideo *secondaryVideo;
   // Used for playing
-  MyPlaylist playerPlaylist;
+  MyPlaylist *playerPlaylist;
   MyVideo *playerVideo;
 
   int currentLinkId = 0;
@@ -83,27 +80,32 @@ private:
   // Import Video
   QGraphicsPixmapItem *pixMapPrim;
   QGraphicsPixmapItem *pixMapSec;
+  QGraphicsPixmapItem *pixMapPlayer;
 
   QImage imageQ;
   size_t numberImageFilesPrimary;
   size_t numberImageFilesSecondary;
+  size_t numberImageFilesPlayer;
 
   QVector<QImage> primList;
   QVector<QImage> secList;
+  QVector<QImage> playerList;
 
-  QString primaryVideoFilePath;
+  //  QString primaryVideoFilePath;
   QStringList primaryFileNames_n;
   QStringList primaryFileNames_p;
 
-  QString secondaryVideoFilePath;
+  //  QString secondaryVideoFilePath;
   QStringList secondaryFileNames_n;
   QStringList secondaryFileNames_p;
 
-  size_t segmentIndexPrimary = 0;
-  size_t segmentIndexSecondary = 0;
+  //  QString playerVideoFilePath;
+  QStringList playerFileNames_n;
+  QStringList playerFileNames_p;
 
   QStringList staticConstStringsPrimary;
   QStringList staticConstStringsSecondary;
+  QStringList staticConstStringsPlayer;
 };
 
 #endif // MAINWINDOW_H

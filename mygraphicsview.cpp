@@ -23,13 +23,48 @@ MyGraphicsView::MyGraphicsView(MyPlaylist *&myPlaylist, int graphicsLocation,
 }
 
 void MyGraphicsView::mousePressEvent(QMouseEvent *ev) {
+
+  qDebug() << "graphicsLocation" << graphicsLocation;
+
   if (graphicsLocation == SECONDARY_LOCATION) {
     return;
   }
 
   start = ev->pos();
 
-  //  debugCoord("Start", start);
+  if (graphicsLocation == PLAYER_LOCATION) {
+    qDebug() << "Clicked: (" << start.x() << "," << start.y();
+
+    // Check if coordinate clicked is inside rectangle
+    // Check if boundary exists for current frame
+    video = myPlaylist->getVideo(currentVideoId);
+    videoFrame = video->getFrame(currentFrame);
+
+    // Loop for each link
+    QMapIterator<int, QGraphicsRectItem *> i(videoFrame->getLinks());
+
+    qDebug() << "Boundaries:";
+
+    while (i.hasNext()) {
+      i.next();
+      qDebug() << i.key() << ": " << i.value()->rect();
+
+      int linkId = i.key();
+
+      if (videoFrame->hasBoundary(linkId)) {
+        QRectF rect = videoFrame->getBoundary(linkId)->rect();
+
+        if (rect.contains(start)) {
+          MyFrame *targetFrame = video->getHyperlinkTarget(linkId);
+          qDebug() << "\nPoint inside boundaries!\n";
+          qDebug() << "Target video -> " << targetFrame->videoTitle;
+          qDebug() << "Target frame -> " << targetFrame->getFrameCount();
+        }
+      }
+    }
+
+    return;
+  }
 
   if (!rubberBand)
     rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
@@ -41,12 +76,12 @@ void MyGraphicsView::mousePressEvent(QMouseEvent *ev) {
 }
 
 void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev) {
-  if (graphicsLocation == SECONDARY_LOCATION) {
+  if (graphicsLocation == SECONDARY_LOCATION ||
+      graphicsLocation == PLAYER_LOCATION) {
     return;
   }
 
   end = ev->pos();
-  //  debugCoord("End", end);
 
   QRect rubberBandRect = QRect(start, end).normalized();
   rubberBand->setGeometry(rubberBandRect);
@@ -55,11 +90,12 @@ void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
-  qDebug() << "mouseReleaseEvent()";
-
-  if (graphicsLocation == SECONDARY_LOCATION) {
+  if (graphicsLocation == SECONDARY_LOCATION ||
+      graphicsLocation == PLAYER_LOCATION) {
     return;
   }
+
+  qDebug() << "mouseReleaseEvent()";
 
   QPoint releasePoint = ev->pos();
 
@@ -87,20 +123,6 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
   }
   QGraphicsView::mouseReleaseEvent(ev);
 }
-
-// void MyGraphicsView::paintEvent(QPaintEvent *ev) {
-//  //  qDebug() << "paintEvent()";
-
-//  //  if (graphicsLocation == SECONDARY_LOCATION) {
-//  //    return;
-//  //  }
-
-//  QGraphicsView::paintEvent(ev);
-//}
-
-// void MyGraphicsView::debugCoord(QString name, QPoint point) {
-//  qDebug() << name << " point: (" << point.x() << ", " << point.y() << ")";
-//}
 
 void MyGraphicsView::updateBoundary(int frameId) {
   if (graphicsLocation == SECONDARY_LOCATION) {
@@ -149,6 +171,10 @@ void MyGraphicsView::clearBoundary() {
   if (pixMapSec && graphicsLocation == SECONDARY_LOCATION) {
     qDebug() << "Secondary clearBoundary()";
     scene->addItem(pixMapSec);
+  }
+  if (pixMapPlayer && graphicsLocation == PLAYER_LOCATION) {
+    qDebug() << "Player clearBoundary()";
+    scene->addItem(pixMapPlayer);
   }
 
   this->setScene(scene);

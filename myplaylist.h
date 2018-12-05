@@ -1,23 +1,22 @@
 #ifndef MYPLAYLIST_H
 #define MYPLAYLIST_H
 
-#include "myvideo.h"
 #include "QVector"
+#include "myvideo.h"
 
 #define PRIMARY_LOCATION 0
 #define SECONDARY_LOCATION 1
+#define PLAYER_LOCATION 2
 
-class MyPlaylist
-{
+class MyPlaylist {
 public:
-    MyPlaylist();
-    void addVideo(MyVideo* video);
-    // When we click to draw boundary, get the active video
-    MyVideo* getVideo(int videoId);
-    QVector<MyVideo*> playlist;
+  MyPlaylist();
+  void addVideo(MyVideo *video);
+  // When we click to draw boundary, get the active video
+  MyVideo *getVideo(int videoId);
+  QVector<MyVideo *> playlist;
 
 private:
-
 };
 
 #endif // MYPLAYLIST_H
