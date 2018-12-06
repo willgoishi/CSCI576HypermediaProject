@@ -55,6 +55,7 @@ private slots:
   void on_playerPlay_clicked();
   void on_playerPause_clicked();
   void on_playerStop_clicked();
+  void setterFunction();
 
 signals:
   void primarySignalProgress(int);
@@ -76,6 +77,7 @@ private:
   // Used for playing
   MyPlaylist *playerPlaylist;
   MyVideo *playerVideo;
+  QTimer *fpsTimer;
 
   int currentLinkId = 0;
   int currentPrimaryFrame = 0;   // Frame for left video

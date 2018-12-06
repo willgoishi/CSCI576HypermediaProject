@@ -3,6 +3,7 @@
 
 #include "QVector"
 #include "myvideo.h"
+#include <QMediaPlaylist>
 
 #define PRIMARY_LOCATION 0
 #define SECONDARY_LOCATION 1

@@ -67,6 +67,9 @@ MainWindow::MainWindow(QWidget *parent)
   secList = QVector<QImage>();
   playerList = QVector<QImage>();
 
+  //Video Player
+  fpsTimer = new QTimer();
+
   // Connect sliders to function
   connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this,
           SLOT(on_sliderLeft_changed(int)));
@@ -249,13 +252,15 @@ void MainWindow::tabSelected(int tab) {
 
     // Get path
     QString filepath = qApp->applicationDirPath() + "/data.json";
-    //        qDebug() << filepath;
+    qDebug() << filepath;
 
     QJsonDocument doc = loadJson(filepath);
     QJsonArray jsonArray = doc.array();
 
     // Create playlist, add video at end of loop
     playerPlaylist = new MyPlaylist();
+
+    if(jsonArray.size() == 0) {return;}
 
     foreach (const QJsonValue &v, jsonArray) {
 
@@ -362,13 +367,34 @@ void MainWindow::tabSelected(int tab) {
   }
 }
 
-void MainWindow::on_playerPlay_clicked() { qDebug() << "Player play clicked"; }
-
-void MainWindow::on_playerPause_clicked() {
-  qDebug() << "Player pause clicked";
+void MainWindow::on_playerPlay_clicked()
+{
+    qDebug() << "Player play clicked";
+    fpsTimer->setInterval(17);
+    connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
+    fpsTimer->start();
 }
 
-void MainWindow::on_playerStop_clicked() { qDebug() << "Player stop clicked"; }
+void MainWindow::on_playerPause_clicked()
+{
+    qDebug() << "Player pause clicked";
+    fpsTimer->stop();
+}
+
+void MainWindow::on_playerStop_clicked()
+{
+    qDebug() << "Player stop clicked";
+    if(fpsTimer->isActive())
+    {
+        fpsTimer->stop();
+        ui->sliderPlayer->setValue(0);
+    }
+}
+
+void MainWindow::setterFunction()
+{
+    ui->sliderPlayer->setValue(ui->sliderPlayer->value()+1);
+}
 
 void MainWindow::emitPrimaryProgressBarSignal(int value) {
   emit primarySignalProgress(value);
@@ -481,9 +507,6 @@ void MainWindow::import() {
   qDebug() << "directoryPath: " << directoryPath;
   qDebug() << "caller: " << caller;
 
-  //  caller == "importPrimaryButton" ? ui->primaryVideoProgressBar->show()
-  //                                  : ui->secondaryVideoProgressBar->show();
-
   importWithDirPath(directoryPath, caller);
 }
 
@@ -556,7 +579,6 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
     //    f2.waitForFinished();
 
   } else if (caller == "videoPlayer") {
-
     //
     // Import
     //
