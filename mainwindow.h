@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QWidget>
+#include <QAudioOutput>
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
@@ -87,6 +88,8 @@ private:
   QString originalVideoTitle;
   int originalFramePaused;
   QStringList playlistTitles;
+
+  QMediaPlayer *audioPlayer;
 
   int currentLinkId = 0;
   int currentPrimaryFrame = 0;   // Frame for left video

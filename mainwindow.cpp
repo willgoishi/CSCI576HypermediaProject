@@ -16,13 +16,14 @@
 #include <QDebug>
 #include <QFrame>
 #include <QImage>
+#include <QAudioFormat>
 #include <QMediaPlayer>
 #include <QPoint>
 #include <QString>
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 2999 // Max to load
+#define TOTAL_FRAMES 1999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -406,6 +407,8 @@ void MainWindow::on_playerPlay_clicked() {
   fpsTimer->setInterval(17);
   connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
   fpsTimer->start();
+
+  audioPlayer->play();
 }
 
 void MainWindow::on_playerPause_clicked() {
@@ -584,6 +587,9 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
   QStringList imageFileNames =
       directory.entryList(QStringList() << "*.rgb", QDir::Files);
 
+  QString soundFilePath =
+      directory.entryList(QStringList() << "*.wav", QDir::Files).first();
+
   qDebug() << "Size: " << imageFileNames.size();
 
   if (caller == "importPrimaryButton") {
@@ -611,6 +617,12 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
         QtConcurrent::run(this, &MainWindow::imageLoading, imageFileNames,
                           staticConstStringsPrimary, &primList);
     //    f1.waitForFinished();
+
+    //
+    //Audio file
+    //
+    audioPlayer = new QMediaPlayer();
+    audioPlayer->setMedia(QMediaContent(QUrl(directoryPath + "/" + soundFilePath)));
 
   } else if (caller == "importSecondaryButton") {
     //
