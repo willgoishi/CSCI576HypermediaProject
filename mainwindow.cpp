@@ -15,14 +15,14 @@
 
 #include <QDebug>
 #include <QFrame>
+#include <QImage>
 #include <QMediaPlayer>
-#include <QPainter>
 #include <QPoint>
 #include <QString>
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 99 // Max to load
+#define TOTAL_FRAMES 8999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -94,6 +94,12 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::on_sliderLeft_changed(int currentPrimaryFrame) {
+
+  if (currentPrimaryFrame >= primaryFramesLoaded) {
+    qDebug() << "Frames not loaded! " << currentPrimaryFrame;
+    return;
+  }
+
   qDebug() << "currentPrimaryFrame = " << currentPrimaryFrame;
 
   // Update boundaries
@@ -105,9 +111,16 @@ void MainWindow::on_sliderLeft_changed(int currentPrimaryFrame) {
   graphicsViewPrimary->scene->addItem(pixMapPrim);
   graphicsViewPrimary->pixMapPrim = pixMapPrim;
   graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
+  //  graphicsViewPrimary->paintEngine()
 }
 
 void MainWindow::on_sliderRight_changed(int currentSecondaryFrame) {
+
+  if (currentSecondaryFrame >= secondaryFramesLoaded) {
+    qDebug() << "Frames not loaded! " << secondaryFramesLoaded;
+    return;
+  }
+
   qDebug() << "currentSecondaryFrame = " << currentSecondaryFrame;
 
   ui->frameCountRight->setText(QString::number(currentSecondaryFrame));
@@ -357,6 +370,14 @@ void MainWindow::on_playerPause_clicked() {
 
 void MainWindow::on_playerStop_clicked() { qDebug() << "Player stop clicked"; }
 
+void MainWindow::emitPrimaryProgressBarSignal(int value) {
+  emit primarySignalProgress(value);
+}
+
+void MainWindow::emitSecondaryProgressBarSignal(int value) {
+  emit secondarySignalProgress(value);
+}
+
 void MainWindow::saveJson(QJsonDocument document, QString fileName) {
   QFile jsonFile(fileName);
   jsonFile.open(QFile::WriteOnly);
@@ -381,15 +402,24 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
     }
 
     if (constStrs[2] == "primary") {
-      ui->primaryVideoProgressBar->setValue(count);
-      ui->primaryVideoProgressBar->update();
+      primaryFramesLoaded = count;
+      //      ui->primaryVideoProgressBar->setValue(primaryFramesLoaded);
+
+      connect(this, SIGNAL(primarySignalProgress(int)),
+              ui->primaryVideoProgressBar, SLOT(setValue(int)));
+      this->emitPrimaryProgressBarSignal(primaryFramesLoaded);
     }
     if (constStrs[2] == "secondary") {
-      ui->secondaryVideoProgressBar->setValue(count);
-      ui->secondaryVideoProgressBar->update();
+      secondaryFramesLoaded = count;
+      //      ui->secondaryVideoProgressBar->setValue(secondaryFramesLoaded);
+
+      connect(this, SIGNAL(secondarySignalProgress(int)),
+              ui->secondaryVideoProgressBar, SLOT(setValue(int)));
+      this->emitSecondaryProgressBarSignal(secondaryFramesLoaded);
     }
     if (constStrs[2] == "player") {
-      //      ui->playerVideoProgressBar->setValue(count);
+      playerFramesLoaded = count;
+      ui->playerVideoProgressBar->setValue(playerFramesLoaded);
       //      ui->playerVideoProgressBar->update();
     }
 
@@ -406,29 +436,32 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
 
     QImage img(352, 288, QImage::Format_RGB32);
     QRgb *pixels = reinterpret_cast<QRgb *>(img.bits());
-    for (int i = 0; i < 352 * 288; i++) {
+    for (uint i = 0; i < 352 * 288; i++) {
       uchar pixel1 = data[i];
       uchar pixel2 = data[i + 1];
       uchar pixel3 = data[i + 2];
       pixels[i] = qRgb(pixel1, pixel2, pixel3);
     }
 
-    img = img.convertToFormat(
-        QImage::Format_RGB444); // Format_Indexed8 //Format_RGB16
+    //    QImage img = QImage(uncharData, 352, 288, 352 * 3,
+    //    QImage::Format_RGB32);
+
+    // Format_Indexed8 //Format_RGB16
+    img = img.convertToFormat(QImage::Format_RGB444);
     images->push_back(img);
 
-    if (constStrs.at(1) == "primaryNextFramesButton" ||
-        constStrs.at(1) == "secondaryNextFramesButton" ||
-        constStrs.at(1) == "importPrimaryButton" ||
-        constStrs.at(1) == "importSecondaryButton" ||
-        constStrs.at(1) == "videoPlayer") {
-      fileNamesPrev->append(filename);
-      fileNames->removeFirst();
-    } else {
-      QString s = fileNamesPrev->last();
-      fileNamesPrev->prepend(s);
-      fileNames->removeLast();
-    }
+    //    if (constStrs.at(1) == "primaryNextFramesButton" ||
+    //        constStrs.at(1) == "secondaryNextFramesButton" ||
+    //        constStrs.at(1) == "importPrimaryButton" ||
+    //        constStrs.at(1) == "importSecondaryButton" ||
+    //        constStrs.at(1) == "videoPlayer") {
+    //      fileNamesPrev->append(filename);
+    //      fileNames->removeFirst();
+    //    } else {
+    //      QString s = fileNamesPrev->last();
+    //      fileNamesPrev->prepend(s);
+    //      fileNames->removeLast();
+    //    }
     qDebug() << filename;
     count++;
   }
@@ -490,7 +523,7 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
         QtConcurrent::run(this, &MainWindow::imageLoading, primaryFileNames_n,
                           staticConstStringsPrimary, &primList,
                           &primaryFileNames_n, &primaryFileNames_p);
-    f1.waitForFinished();
+    //    f1.waitForFinished();
 
   } else if (caller == "importSecondaryButton") {
     //
@@ -520,7 +553,7 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
         QtConcurrent::run(this, &MainWindow::imageLoading, secondaryFileNames_n,
                           staticConstStringsSecondary, &secList,
                           &secondaryFileNames_n, &secondaryFileNames_p);
-    f2.waitForFinished();
+    //    f2.waitForFinished();
 
   } else if (caller == "videoPlayer") {
 

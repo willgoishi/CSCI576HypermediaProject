@@ -33,6 +33,8 @@ class MainWindow : public QMainWindow {
 public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
+  void emitPrimaryProgressBarSignal(int);
+  void emitSecondaryProgressBarSignal(int);
 
 private slots:
   void on_sliderLeft_changed(int);
@@ -53,6 +55,10 @@ private slots:
   void on_playerPlay_clicked();
   void on_playerPause_clicked();
   void on_playerStop_clicked();
+
+signals:
+  void primarySignalProgress(int);
+  void secondarySignalProgress(int);
 
 private:
   void imageLoading(QStringList imageFileNames, QStringList constStrs,
@@ -92,14 +98,17 @@ private:
   QVector<QImage> playerList;
 
   //  QString primaryVideoFilePath;
+  int primaryFramesLoaded = 0;
   QStringList primaryFileNames_n;
   QStringList primaryFileNames_p;
 
   //  QString secondaryVideoFilePath;
+  int secondaryFramesLoaded = 0;
   QStringList secondaryFileNames_n;
   QStringList secondaryFileNames_p;
 
   //  QString playerVideoFilePath;
+  int playerFramesLoaded = 0;
   QStringList playerFileNames_n;
   QStringList playerFileNames_p;
 

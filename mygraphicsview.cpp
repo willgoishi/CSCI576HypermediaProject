@@ -89,6 +89,12 @@ void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev) {
   QGraphicsView::mouseMoveEvent(ev);
 }
 
+void MyGraphicsView::paintEvent(QPaintEvent *ev) {
+  qDebug() << "paintEvent()";
+
+  QGraphicsView::paintEvent(ev);
+}
+
 void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
   if (graphicsLocation == SECONDARY_LOCATION ||
       graphicsLocation == PLAYER_LOCATION) {
