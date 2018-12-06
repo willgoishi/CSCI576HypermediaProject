@@ -23,7 +23,7 @@
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 1999 // Max to load
+#define TOTAL_FRAMES 999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -404,16 +404,16 @@ void MainWindow::tabSelected(int tab) {
 
 void MainWindow::on_playerPlay_clicked() {
   qDebug() << "Player play clicked";
-  fpsTimer->setInterval(17);
+  fpsTimer->setInterval(33);
   connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
   fpsTimer->start();
-
   audioPlayer->play();
 }
 
 void MainWindow::on_playerPause_clicked() {
   qDebug() << "Player pause clicked";
   fpsTimer->stop();
+  audioPlayer->pause();
 }
 
 void MainWindow::on_playerStop_clicked() {
@@ -422,6 +422,8 @@ void MainWindow::on_playerStop_clicked() {
     fpsTimer->stop();
     ui->sliderPlayer->setValue(0);
   }
+    audioPlayer->setPosition(0);
+    audioPlayer->stop();
 
   // Go back to previous video
   qDebug() << "originalVideoTitle" << originalVideoTitle;
