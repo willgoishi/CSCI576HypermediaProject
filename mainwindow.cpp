@@ -23,7 +23,7 @@
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 999 // Max to load
+#define TOTAL_FRAMES 2999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -407,12 +407,16 @@ void MainWindow::on_playerPlay_clicked() {
   fpsTimer->setInterval(33);
   connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
   fpsTimer->start();
+
+  //AudioPlayer -> Play
   audioPlayer->play();
 }
 
 void MainWindow::on_playerPause_clicked() {
   qDebug() << "Player pause clicked";
   fpsTimer->stop();
+
+  //AudioPlayer -> Pause
   audioPlayer->pause();
 }
 
@@ -422,8 +426,10 @@ void MainWindow::on_playerStop_clicked() {
     fpsTimer->stop();
     ui->sliderPlayer->setValue(0);
   }
-    audioPlayer->setPosition(0);
-    audioPlayer->stop();
+
+   //Audio Player -> on stop -> stops and sets position to 0 (in milliseconds) (duration of audio: 300000 milliseconds)
+   audioPlayer->setPosition(0);
+   audioPlayer->stop();
 
   // Go back to previous video
   qDebug() << "originalVideoTitle" << originalVideoTitle;
@@ -468,6 +474,10 @@ void MainWindow::emitPlayerProgressBarSignal(int value) {
 }
 
 void MainWindow::saveJson(QJsonDocument document, QString fileName) {
+
+    qDebug() << document;
+    qDebug() << fileName;
+
   QFile jsonFile(fileName);
   jsonFile.open(QFile::WriteOnly);
   jsonFile.write(document.toJson());
@@ -621,7 +631,7 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
     //    f1.waitForFinished();
 
     //
-    //Audio file
+    //Audio Player setup
     //
     audioPlayer = new QMediaPlayer();
     audioPlayer->setMedia(QMediaContent(QUrl(directoryPath + "/" + soundFilePath)));
