@@ -22,7 +22,7 @@
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 2999 // Max to load
+#define TOTAL_FRAMES 999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -69,6 +69,12 @@ MainWindow::MainWindow(QWidget *parent)
 
   // Video Player
   fpsTimer = new QTimer();
+  fpsTimer->setInterval(33);
+  connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
+
+  // Create audio player
+  audioPlayer = new QMediaPlayer();
+  audioPlayer->setVolume(50);
 
   // Connect sliders to function
   connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this,
@@ -403,22 +409,26 @@ void MainWindow::tabSelected(int tab) {
 
 void MainWindow::on_playerPlay_clicked() {
   qDebug() << "Player play clicked";
-  fpsTimer->setInterval(17);
-  connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
+
+  // 33*20 + 34*10 == 1000
+
   fpsTimer->start();
+
+  audioPlayer->play();
+  QString filepath = audioPlayer->currentMedia().canonicalUrl().toString();
+  qDebug() << "Current media:" << filepath;
 }
 
 void MainWindow::on_playerPause_clicked() {
   qDebug() << "Player pause clicked";
   fpsTimer->stop();
+  audioPlayer->pause();
 }
 
 void MainWindow::on_playerStop_clicked() {
   qDebug() << "Player stop clicked";
-  if (fpsTimer->isActive()) {
-    fpsTimer->stop();
-    ui->sliderPlayer->setValue(0);
-  }
+  fpsTimer->stop();
+  ui->sliderPlayer->setValue(0);
 
   // Go back to previous video
   qDebug() << "originalVideoTitle" << originalVideoTitle;
@@ -428,8 +438,25 @@ void MainWindow::on_playerStop_clicked() {
   if (originalVideoTitle != playerFilepath) {
     qDebug() << "Go back to original video";
     playerFilepath = originalVideoTitle;
+    ui->sliderPlayer->setValue(originalFramePaused + 1);
     ui->sliderPlayer->setValue(originalFramePaused);
+
+    QDir directory(playerFilepath);
+    QString soundFilePath =
+        directory.entryList(QStringList() << "*.wav", QDir::Files).first();
+    audioPlayer->setMedia(QMediaContent(
+        QUrl::fromLocalFile(playerFilepath + "/" + soundFilePath)));
+
+    int audioPosition =
+        ((originalFramePaused / 30) * 1000) + (originalFramePaused % 30);
+
+    audioPlayer->setPosition(audioPosition);
+
+  } else {
+    audioPlayer->setPosition(0);
   }
+
+  audioPlayer->stop();
 }
 
 void MainWindow::setterFunction() {
@@ -441,6 +468,11 @@ void MainWindow::onUpdatePlayerFrame(int value) {
   qDebug() << "onUpdatePlayerFrame():" << value;
   originalFramePaused = ui->sliderPlayer->value();
   ui->sliderPlayer->setValue(value);
+
+  // Calculate ms from frames
+  int audioPosition = ((value / 30) * 1000) + (value % 30);
+  audioPlayer->setPosition(audioPosition);
+  qDebug() << "Set audio position" << audioPosition;
 }
 
 void MainWindow::onUpdatePlayerFile(QString value) {
@@ -448,6 +480,15 @@ void MainWindow::onUpdatePlayerFile(QString value) {
 
   // Set file path for slider to use
   playerFilepath = value;
+  prevPlayerFilePath = playerFilepath;
+
+  QDir directory(playerFilepath);
+  QString soundFilePath =
+      directory.entryList(QStringList() << "*.wav", QDir::Files).first();
+  audioPlayer->setMedia(
+      QMediaContent(QUrl::fromLocalFile(playerFilepath + "/" + soundFilePath)));
+
+  qDebug() << "Player sound from: " << playerFilepath + "/" + soundFilePath;
 }
 
 void MainWindow::emitPrimaryProgressBarSignal(int value) {
@@ -656,7 +697,12 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
     playerLists.insert(directoryPath, playerList);
 
     playerFilepath = playerPlaylist->getVideo(0)->videoTitle;
-    //    playerFilepath = "/Users/webber/Downloads/London/LondonOne";
+
+    QDir directory(playerFilepath);
+    QString soundFilePath =
+        directory.entryList(QStringList() << "*.wav", QDir::Files).first();
+    audioPlayer->setMedia(QMediaContent(
+        QUrl::fromLocalFile(playerFilepath + "/" + soundFilePath)));
 
     qDebug() << "QtConcurrent::run";
 

@@ -128,10 +128,15 @@ private:
   // Active player
   QString playerFilepath = "";
   int playerStartFrame = 0;
+  int audioPosition = 0;
+  QString prevPlayerFilePath = "";
 
   QStringList staticConstStringsPrimary;
   QStringList staticConstStringsSecondary;
   //  QStringList staticConstStringsPlayer;
+
+  // Audio player
+  QMediaPlayer *audioPlayer;
 };
 
 #endif // MAINWINDOW_H
