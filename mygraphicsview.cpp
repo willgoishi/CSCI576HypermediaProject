@@ -59,6 +59,8 @@ void MyGraphicsView::mousePressEvent(QMouseEvent *ev) {
           qDebug() << "\nPoint inside boundaries!\n";
           qDebug() << "Target video -> " << targetFrame->videoTitle;
           qDebug() << "Target frame -> " << targetFrame->getFrameCount();
+          emit updatePlayerFile(targetFrame->videoTitle);
+          emit updatePlayerFrame(targetFrame->getFrameCount());
         }
       }
     }

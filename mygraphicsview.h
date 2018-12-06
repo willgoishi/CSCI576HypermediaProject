@@ -38,6 +38,10 @@ protected:
   void paintEvent(QPaintEvent *ev);
   //  void debugCoord(QString name, QPoint point);
 
+signals:
+  void updatePlayerFrame(int);
+  void updatePlayerFile(QString);
+
 private:
   QRubberBand *rubberBand;
   QPoint start;

@@ -58,6 +58,9 @@ private slots:
   void on_playerStop_clicked();
   void setterFunction();
 
+  void onUpdatePlayerFrame(int);
+  void onUpdatePlayerFile(QString);
+
 signals:
   void primarySignalProgress(int);
   void secondarySignalProgress(int);
@@ -65,8 +68,8 @@ signals:
 
 private:
   void imageLoading(QStringList imageFileNames, QStringList constStrs,
-                    QVector<QImage> *images, QStringList *fileNames,
-                    QStringList *fileNamesPrev);
+                    QVector<QImage> *images);
+  void loadRemainingVideos();
 
   Ui::MainWindow *ui;
   MyGraphicsView *graphicsViewPrimary;
@@ -99,7 +102,9 @@ private:
 
   QVector<QImage> primList;
   QVector<QImage> secList;
-  QVector<QImage> playerList;
+  // map of filename to images
+  QMap<QString, QVector<QImage>> playerLists;
+  //  QVector<QImage> *playerList;
 
   //  QString primaryVideoFilePath;
   int primaryFramesLoaded = 0;
@@ -116,9 +121,13 @@ private:
   QStringList playerFileNames_n;
   QStringList playerFileNames_p;
 
+  // Active player
+  QString playerFilepath = "";
+  int playerStartFrame = 0;
+
   QStringList staticConstStringsPrimary;
   QStringList staticConstStringsSecondary;
-  QStringList staticConstStringsPlayer;
+  //  QStringList staticConstStringsPlayer;
 };
 
 #endif // MAINWINDOW_H
