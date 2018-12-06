@@ -22,7 +22,7 @@
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 499 // Max to load
+#define TOTAL_FRAMES 8999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -137,7 +137,7 @@ void MainWindow::on_sliderRight_changed(int currentSecondaryFrame) {
 void MainWindow::on_sliderPlayer_valueChanged(int currentPlayerFrame) {
 
   if (currentPlayerFrame >= playerFramesLoaded) {
-    qDebug() << "Frames not loaded! " << secondaryFramesLoaded;
+    qDebug() << "Frames not loaded! " << currentPlayerFrame;
     return;
   }
 
@@ -452,14 +452,30 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
     if (constStrs[2] == "primary") {
       primaryFramesLoaded = count;
       this->emitPrimaryProgressBarSignal(primaryFramesLoaded);
+      // Emit on first frame only
+      if (count == 0) {
+        qDebug() << "Emit!!";
+        ui->horizontalSliderLeft->setValue(1);
+        ui->horizontalSliderLeft->setValue(0);
+      }
     }
     if (constStrs[2] == "secondary") {
       secondaryFramesLoaded = count;
       this->emitSecondaryProgressBarSignal(secondaryFramesLoaded);
+      if (count == 0) {
+        qDebug() << "Emit!!";
+        ui->horizontalSliderRight->setValue(1);
+        ui->horizontalSliderRight->setValue(0);
+      }
     }
     if (constStrs[2] == "player") {
       playerFramesLoaded = count;
       this->emitPlayerProgressBarSignal(playerFramesLoaded);
+      if (count == 0) {
+        qDebug() << "Emit!!";
+        ui->sliderPlayer->setValue(1);
+        ui->sliderPlayer->setValue(0);
+      }
     }
 
     QString filePath = constStrs.at(0) + "/" + filename;
@@ -501,7 +517,7 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
     //      fileNamesPrev->prepend(s);
     //      fileNames->removeLast();
     //    }
-    qDebug() << filename;
+    //    qDebug() << filename;
     count++;
   }
   qDebug() << "Done Loading!";
