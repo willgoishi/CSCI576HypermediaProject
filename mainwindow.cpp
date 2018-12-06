@@ -68,8 +68,7 @@ MainWindow::MainWindow(QWidget *parent)
   playerList = QVector<QImage>();
 
   //Video Player
-  videoPlayer = new QMediaPlayer(this, QMediaPlayer::VideoSurface);
-  videoPlayer->setAudioRole(QAudio::VideoRole);
+  fpsTimer = new QTimer();
 
   // Connect sliders to function
   connect(ui->horizontalSliderLeft, SIGNAL(valueChanged(int)), this,
@@ -238,17 +237,15 @@ void MainWindow::tabSelected(int tab) {
 
     // Load data
 
-
     // Get path
     QString filepath = qApp->applicationDirPath() + "/data.json";
-    //        qDebug() << filepath;
+    qDebug() << filepath;
 
     QJsonDocument doc = loadJson(filepath);
     QJsonArray jsonArray = doc.array();
 
     // Create playlist, add video at end of loop
     playerPlaylist = new MyPlaylist();
-
 
     if(jsonArray.size() == 0) {return;}
 
@@ -351,11 +348,6 @@ void MainWindow::tabSelected(int tab) {
     qDebug() << videoTitle;
     importWithDirPath(directoryPath, "videoPlayer");
 
-    playerPlaylist->addVideo(primaryVideo);
-    //videoPlayer->setPlaylist(playerPlaylist);
-    videoPlayer->setMedia(QUrl::fromLocalFile(directoryPath));
-
-
   } else {
     graphicsViewPrimary->show();
     graphicsViewSecondary->show();
@@ -365,53 +357,30 @@ void MainWindow::tabSelected(int tab) {
 void MainWindow::on_playerPlay_clicked()
 {
     qDebug() << "Player play clicked";
-    switch(videoPlayer->state())
-    {
-        case QMediaPlayer::PlayingState:
-            videoPlayer->pause();
-            break;
-        default:
-            videoPlayer->play();
-            break;
-    }
+    fpsTimer->setInterval(17);
+    connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
+    fpsTimer->start();
 }
 
 void MainWindow::on_playerPause_clicked()
 {
     qDebug() << "Player pause clicked";
-    switch(videoPlayer->state())
-    {
-        case QMediaPlayer::PausedState:
-            videoPlayer->play();
-            break;
-        default:
-            videoPlayer->pause();
-            break;
-    }
+    fpsTimer->stop();
 }
 
 void MainWindow::on_playerStop_clicked()
 {
     qDebug() << "Player stop clicked";
-    if(videoPlayer->state() == QMediaPlayer::PlayingState || videoPlayer->state() == QMediaPlayer::PausedState)
+    if(fpsTimer->isActive())
     {
-        videoPlayer->stop();
+        fpsTimer->stop();
+        ui->sliderPlayer->setValue(0);
     }
 }
 
-void MainWindow::on_playerStatusChanged(QMediaPlayer::MediaStatus status)
+void MainWindow::setterFunction()
 {
-    switch(status)
-    {
-        case QMediaPlayer::EndOfMedia:
-            videoPlayer->stop();
-            break;
-        case QMediaPlayer::InvalidMedia:
-            //setLabelInfo(videoPlayer->errorString());
-            break;
-        default:
-            break;
-    }
+    ui->sliderPlayer->setValue(ui->sliderPlayer->value()+1);
 }
 
 void MainWindow::saveJson(QJsonDocument document, QString fileName) {
@@ -504,9 +473,6 @@ void MainWindow::import() {
 
   qDebug() << "directoryPath: " << directoryPath;
   qDebug() << "caller: " << caller;
-
-  //  caller == "importPrimaryButton" ? ui->primaryVideoProgressBar->show()
-  //                                  : ui->secondaryVideoProgressBar->show();
 
   importWithDirPath(directoryPath, caller);
 }

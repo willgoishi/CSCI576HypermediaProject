@@ -53,7 +53,7 @@ private slots:
   void on_playerPlay_clicked();
   void on_playerPause_clicked();
   void on_playerStop_clicked();
-  void on_playerStatusChanged(QMediaPlayer::MediaStatus);
+  void setterFunction();
 
 private:
   void imageLoading(QStringList imageFileNames, QStringList constStrs,
@@ -69,9 +69,9 @@ private:
   MyVideo *primaryVideo;
   MyVideo *secondaryVideo;
   // Used for playing
-  QMediaPlayer *videoPlayer;
   MyPlaylist *playerPlaylist;
   MyVideo *playerVideo;
+  QTimer *fpsTimer;
 
   int currentLinkId = 0;
   int currentPrimaryFrame = 0;   // Frame for left video
