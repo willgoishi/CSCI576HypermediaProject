@@ -431,8 +431,8 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
           SLOT(setValue(int)));
   connect(this, SIGNAL(secondarySignalProgress(int)),
           ui->secondaryVideoProgressBar, SLOT(setValue(int)));
-  connect(this, SIGNAL(secondarySignalProgress(int)),
-          ui->secondaryVideoProgressBar, SLOT(setValue(int)));
+  connect(this, SIGNAL(playerSignalProgress(int)), ui->playerVideoProgressBar,
+          SLOT(setValue(int)));
 
   int count = 0;
   foreach (QString filename, imageFileNames) {
