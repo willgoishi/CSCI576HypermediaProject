@@ -30,6 +30,7 @@ public:
   QGraphicsPixmapItem *pixMapSec;
   QGraphicsPixmapItem *pixMapPlayer;
   QGraphicsScene *scene;
+  int graphicsLocation = 0;
 
 protected:
   void mouseMoveEvent(QMouseEvent *ev);
@@ -59,7 +60,6 @@ private:
   int currentFrame = 0;
   int currentLinkId = 0;
   int currentVideoId = 0;
-  int graphicsLocation = 0;
 };
 
 #endif // MYGRAPHICSVIEW_H

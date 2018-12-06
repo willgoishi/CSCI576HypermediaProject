@@ -70,6 +70,7 @@ private:
   void imageLoading(QStringList imageFileNames, QStringList constStrs,
                     QVector<QImage> *images);
   void loadRemainingVideos();
+  void delay();
 
   Ui::MainWindow *ui;
   MyGraphicsView *graphicsViewPrimary;
@@ -83,6 +84,9 @@ private:
   MyPlaylist *playerPlaylist;
   MyVideo *playerVideo;
   QTimer *fpsTimer;
+  QString originalVideoTitle;
+  int originalFramePaused;
+  QStringList playlistTitles;
 
   int currentLinkId = 0;
   int currentPrimaryFrame = 0;   // Frame for left video

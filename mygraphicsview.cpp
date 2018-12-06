@@ -143,6 +143,10 @@ void MyGraphicsView::updateBoundary(int frameId) {
 
   clearBoundary();
 
+  if (graphicsLocation == HYPERLINK_LOCATION) {
+    return;
+  }
+
   qDebug() << "currentVideoId: " << currentVideoId;
 
   // Check if boundary exists for current frame
@@ -182,6 +186,10 @@ void MyGraphicsView::clearBoundary() {
   }
   if (pixMapPlayer && graphicsLocation == PLAYER_LOCATION) {
     qDebug() << "Player clearBoundary()";
+    scene->addItem(pixMapPlayer);
+  }
+  if (pixMapPlayer && graphicsLocation == HYPERLINK_LOCATION) {
+    qDebug() << "hyperlink clearBoundary()";
     scene->addItem(pixMapPlayer);
   }
 

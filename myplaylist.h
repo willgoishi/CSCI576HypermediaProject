@@ -8,6 +8,7 @@
 #define PRIMARY_LOCATION 0
 #define SECONDARY_LOCATION 1
 #define PLAYER_LOCATION 2
+#define HYPERLINK_LOCATION 3
 
 class MyPlaylist {
 public:

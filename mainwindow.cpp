@@ -22,7 +22,7 @@
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 8999 // Max to load
+#define TOTAL_FRAMES 2999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -155,6 +155,14 @@ void MainWindow::on_sliderPlayer_valueChanged(int currentPlayerFrame) {
 
   graphicsViewPlayer->scene->addItem(pixMapPlayer);
   graphicsViewPlayer->pixMapPlayer = pixMapPlayer;
+
+  // Don't update boundary if we aren't playing the original video
+  if (originalVideoTitle == playerFilepath) {
+    graphicsViewPlayer->graphicsLocation = PLAYER_LOCATION;
+  } else {
+    graphicsViewPlayer->graphicsLocation = HYPERLINK_LOCATION;
+  }
+
   graphicsViewPlayer->updateBoundary(currentPlayerFrame);
 }
 
@@ -369,6 +377,7 @@ void MainWindow::tabSelected(int tab) {
 
     // Import primary video
     QString videoTitle = playerVideo->videoTitle;
+    originalVideoTitle = videoTitle;
     QString directoryPath = videoTitle;
     qDebug() << videoTitle;
     importWithDirPath(directoryPath, "videoPlayer");
@@ -381,9 +390,9 @@ void MainWindow::tabSelected(int tab) {
       qDebug() << "videoTitle: " << videoTitle;
 
       // If video title not loaded before, load
-      //      if (!playerLists.contains(videoTitle)) {
-      //        importWithDirPath(videoTitle, "videoPlayer");
-      //      }
+      if (!playerLists.contains(videoTitle)) {
+        importWithDirPath(videoTitle, "videoPlayer");
+      }
     }
 
   } else {
@@ -410,6 +419,17 @@ void MainWindow::on_playerStop_clicked() {
     fpsTimer->stop();
     ui->sliderPlayer->setValue(0);
   }
+
+  // Go back to previous video
+  qDebug() << "originalVideoTitle" << originalVideoTitle;
+  qDebug() << "playerFilepath" << playerFilepath;
+  qDebug() << "originalFramePaused" << originalFramePaused;
+
+  if (originalVideoTitle != playerFilepath) {
+    qDebug() << "Go back to original video";
+    playerFilepath = originalVideoTitle;
+    ui->sliderPlayer->setValue(originalFramePaused);
+  }
 }
 
 void MainWindow::setterFunction() {
@@ -417,11 +437,17 @@ void MainWindow::setterFunction() {
 }
 
 void MainWindow::onUpdatePlayerFrame(int value) {
+  delay();
   qDebug() << "onUpdatePlayerFrame():" << value;
+  originalFramePaused = ui->sliderPlayer->value();
+  ui->sliderPlayer->setValue(value);
 }
 
 void MainWindow::onUpdatePlayerFile(QString value) {
   qDebug() << "onUpdatePlayerFile():" << value;
+
+  // Set file path for slider to use
+  playerFilepath = value;
 }
 
 void MainWindow::emitPrimaryProgressBarSignal(int value) {
@@ -465,6 +491,10 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
 
     if (count > TOTAL_FRAMES) {
       break;
+    }
+
+    if (count % 1000 == 0) {
+      qDebug() << "Loaded " << filename;
     }
 
     if (constStrs[1] == "importPrimaryButton") {
@@ -519,10 +549,16 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
     img = img.convertToFormat(QImage::Format_RGB444);
     images->push_back(img);
 
-    qDebug() << filename;
+    //    qDebug() << filename;
     count++;
   }
   qDebug() << "Done Loading!";
+}
+
+void MainWindow::delay() {
+  QTime dieTime = QTime::currentTime().addSecs(0.5);
+  while (QTime::currentTime() < dieTime)
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
 void MainWindow::import() {
@@ -619,8 +655,8 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
     QVector<QImage> *playerList = new QVector<QImage>();
     playerLists.insert(directoryPath, playerList);
 
-    //    playerFilepath = directoryPath;
-    playerFilepath = "/Users/webber/Downloads/London/LondonOne";
+    playerFilepath = playerPlaylist->getVideo(0)->videoTitle;
+    //    playerFilepath = "/Users/webber/Downloads/London/LondonOne";
 
     qDebug() << "QtConcurrent::run";
 
