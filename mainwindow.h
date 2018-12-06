@@ -103,7 +103,7 @@ private:
   QVector<QImage> primList;
   QVector<QImage> secList;
   // map of filename to images
-  QMap<QString, QVector<QImage>> playerLists;
+  QMap<QString, QVector<QImage> *> playerLists;
   //  QVector<QImage> *playerList;
 
   //  QString primaryVideoFilePath;

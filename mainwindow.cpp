@@ -148,10 +148,10 @@ void MainWindow::on_sliderPlayer_valueChanged(int currentPlayerFrame) {
 
   qDebug() << "playerFilepath: " << playerFilepath;
 
-  QVector<QImage> imageList = playerLists[playerFilepath];
+  QVector<QImage> *imageList = playerLists[playerFilepath];
 
   pixMapPlayer = new QGraphicsPixmapItem(
-      QPixmap::fromImage((imageList)[currentPlayerFrame]));
+      QPixmap::fromImage((*imageList)[currentPlayerFrame]));
 
   graphicsViewPlayer->scene->addItem(pixMapPlayer);
   graphicsViewPlayer->pixMapPlayer = pixMapPlayer;
@@ -317,13 +317,6 @@ void MainWindow::tabSelected(int tab) {
             QJsonArray coords = boundary.value("coords").toArray();
             int linkId = boundary.value("linkId").toInt();
 
-            //            qDebug() << "\n Coords \n" << coords << "\n";
-            //            qDebug() << "\n Coords[0] \n" << coords.at(0) << "\n";
-            //            qDebug() << "\n Coords[1] \n" << coords.at(1) << "\n";
-            //            qDebug() << "\n Coords[2] \n" << coords.at(2) << "\n";
-            //            qDebug() << "\n Coords[3] \n" << coords.at(3) << "\n";
-            //            qDebug() << "\n linkId \n" << linkId << "\n";
-
             qreal x = coords.at(0).toDouble();
             qreal y = coords.at(1).toDouble();
             qreal x2 = coords.at(2).toDouble();
@@ -335,8 +328,6 @@ void MainWindow::tabSelected(int tab) {
           }
         }
       }
-
-      //      qDebug() << "\nFrames: \n" << frames << "\n";
 
       // Load hyperlinks
       QJsonArray hyperlinks = video.value("hyperlinks").toArray();
@@ -350,8 +341,6 @@ void MainWindow::tabSelected(int tab) {
         playerVideo->addHyperlinkTarget(linkId,
                                         new MyFrame(frameCount, videoTitle));
       }
-
-      //      qDebug() << v.toObject() << "\n";
 
       playerPlaylist->addVideo(playerVideo);
       break; // Only need 1 loop
@@ -378,10 +367,6 @@ void MainWindow::tabSelected(int tab) {
     connect(graphicsViewPlayer, SIGNAL(updatePlayerFile(QString)), this,
             SLOT(onUpdatePlayerFile(QString)));
 
-    //    qDebug() << "Player video title" <<
-    //    playerPlaylist->getVideo(0)->videoTitle; qDebug() << "Frame count" <<
-    //    playerPlaylist->getVideo(0)->myVideo.size();
-
     // Import primary video
     QString videoTitle = playerVideo->videoTitle;
     QString directoryPath = videoTitle;
@@ -389,17 +374,17 @@ void MainWindow::tabSelected(int tab) {
     importWithDirPath(directoryPath, "videoPlayer");
 
     // Get remaining videos
-    //    MyVideo *hyperlinkVideo = playerPlaylist->getVideo(0);
-    //    foreach (MyFrame *hyperlinkFrame, hyperlinkVideo->hyperlinks) {
-    //      QString videoTitle = hyperlinkFrame->videoTitle;
+    MyVideo *hyperlinkVideo = playerPlaylist->getVideo(0);
+    foreach (MyFrame *hyperlinkFrame, hyperlinkVideo->hyperlinks) {
+      QString videoTitle = hyperlinkFrame->videoTitle;
 
-    //      qDebug() << "videoTitle: " << videoTitle;
+      qDebug() << "videoTitle: " << videoTitle;
 
-    //      // If video title not loaded before, load
-    //      //      if (!playerLists.contains(videoTitle)) {
-    //      //        importWithDirPath(videoTitle, "videoPlayer");
-    //      //      }
-    //    }
+      // If video title not loaded before, load
+      //      if (!playerLists.contains(videoTitle)) {
+      //        importWithDirPath(videoTitle, "videoPlayer");
+      //      }
+    }
 
   } else {
     graphicsViewPrimary->show();
@@ -466,7 +451,7 @@ QJsonDocument MainWindow::loadJson(QString fileName) {
 void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
                               QVector<QImage> *images) {
 
-  qDebug() << "imageLoading" << constStrs[2];
+  qDebug() << "imageLoading" << constStrs[1];
 
   connect(this, SIGNAL(primarySignalProgress(int)), ui->primaryVideoProgressBar,
           SLOT(setValue(int)));
@@ -482,7 +467,7 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
       break;
     }
 
-    if (constStrs[2] == "importPrimaryButton") {
+    if (constStrs[1] == "importPrimaryButton") {
       primaryFramesLoaded = count;
       this->emitPrimaryProgressBarSignal(primaryFramesLoaded);
       // Emit on first frame only
@@ -492,7 +477,7 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
         ui->horizontalSliderLeft->setValue(0);
       }
     }
-    if (constStrs[2] == "importSecondaryButton") {
+    if (constStrs[1] == "importSecondaryButton") {
       secondaryFramesLoaded = count;
       this->emitSecondaryProgressBarSignal(secondaryFramesLoaded);
       if (count == 0) {
@@ -501,7 +486,7 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
         ui->horizontalSliderRight->setValue(0);
       }
     }
-    if (constStrs[2] == "videoPlayer") {
+    if (constStrs[1] == "videoPlayer") {
       playerFramesLoaded = count;
       this->emitPlayerProgressBarSignal(playerFramesLoaded);
       if (count == 0) {
@@ -631,15 +616,15 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
 
     qDebug() << "staticConstStringsPlayer";
 
-    QVector<QImage> playerList;
+    QVector<QImage> *playerList = new QVector<QImage>();
     playerLists.insert(directoryPath, playerList);
 
-    playerFilepath = directoryPath;
-    //    playerFilepath = "/Users/webber/Downloads/London/LondonOne";
+    //    playerFilepath = directoryPath;
+    playerFilepath = "/Users/webber/Downloads/London/LondonOne";
 
     qDebug() << "QtConcurrent::run";
 
     QtConcurrent::run(this, &MainWindow::imageLoading, imageFileNames,
-                      staticConstStringsPlayer, &playerList);
+                      staticConstStringsPlayer, &*playerList);
   }
 }
