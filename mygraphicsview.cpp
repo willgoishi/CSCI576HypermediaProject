@@ -193,7 +193,16 @@ void MyGraphicsView::clearBoundary() {
 void MyGraphicsView::showBoundary(QGraphicsRectItem *boundary, int linkId) {
   qDebug() << "showBoundary()";
 
-  scene->addRect(boundary->rect(), QPen(linkColorMap[linkId]));
+  QPen pen;
+
+  if (currentLinkId == linkId) {
+    pen = QColor(Qt::red);
+  } else {
+    pen = QColor(Qt::blue);
+  }
+
+  //  scene->addRect(boundary->rect(), QPen(linkColorMap[linkId]));
+  scene->addRect(boundary->rect(), pen);
 }
 
 void MyGraphicsView::updateCurrentLink(int linkId) {

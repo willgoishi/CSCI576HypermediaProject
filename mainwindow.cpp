@@ -114,7 +114,6 @@ void MainWindow::on_sliderLeft_changed(int currentPrimaryFrame) {
   graphicsViewPrimary->scene->addItem(pixMapPrim);
   graphicsViewPrimary->pixMapPrim = pixMapPrim;
   graphicsViewPrimary->updateBoundary(currentPrimaryFrame);
-  //  graphicsViewPrimary->paintEngine()
 }
 
 void MainWindow::on_sliderRight_changed(int currentSecondaryFrame) {
@@ -152,7 +151,6 @@ void MainWindow::on_sliderPlayer_valueChanged(int currentPlayerFrame) {
 
   graphicsViewPlayer->scene->addItem(pixMapPlayer);
   graphicsViewPlayer->pixMapPlayer = pixMapPlayer;
-
   graphicsViewPlayer->updateBoundary(currentPlayerFrame);
 }
 
@@ -180,9 +178,19 @@ void MainWindow::on_selectLinks_changed(int index) {
       primaryVideo->getFirstFrameWithBoundaryFromLinkId(currentLinkId);
 
   if (primaryVideo->hasFirstFrameWithBoundaryFromLinkId(currentLinkId)) {
+    qDebug() << "hasFirstFrameWithBoundaryFromLinkId";
     ui->horizontalSliderLeft->setValue(frameIndex);
     ui->horizontalSliderLeft->update();
+  } else {
+    frameIndex = ui->horizontalSliderLeft->value();
   }
+
+  // Redo boundary
+  pixMapPrim =
+      new QGraphicsPixmapItem(QPixmap::fromImage(primList.at(frameIndex)));
+  graphicsViewPrimary->scene->addItem(pixMapPrim);
+  graphicsViewPrimary->pixMapPrim = pixMapPrim;
+  graphicsViewPrimary->updateBoundary(frameIndex);
 
   qDebug() << "1st frame for linkId:" << currentLinkId << " is " << frameIndex;
 
