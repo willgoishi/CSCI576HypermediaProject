@@ -132,7 +132,7 @@ private:
   QString prevPlayerFilePath = "";
 
   QStringList staticConstStringsPrimary;
-  QStringList staticConstStringsSecondary;
+  //  QStringList staticConstStringsSecondary;
   //  QStringList staticConstStringsPlayer;
 
   // Audio player

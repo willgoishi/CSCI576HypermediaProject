@@ -24,7 +24,7 @@ MyGraphicsView::MyGraphicsView(MyPlaylist *&myPlaylist, int graphicsLocation,
 
 void MyGraphicsView::mousePressEvent(QMouseEvent *ev) {
 
-  qDebug() << "graphicsLocation" << graphicsLocation;
+  //  qDebug() << "graphicsLocation" << graphicsLocation;
 
   if (graphicsLocation == SECONDARY_LOCATION) {
     return;
@@ -43,7 +43,7 @@ void MyGraphicsView::mousePressEvent(QMouseEvent *ev) {
     // Loop for each link
     QMapIterator<int, QGraphicsRectItem *> i(videoFrame->getLinks());
 
-    qDebug() << "Boundaries:";
+    //    qDebug() << "Boundaries:";
 
     while (i.hasNext()) {
       i.next();
@@ -92,7 +92,7 @@ void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void MyGraphicsView::paintEvent(QPaintEvent *ev) {
-  qDebug() << "paintEvent()";
+  //  qDebug() << "paintEvent()";
 
   QGraphicsView::paintEvent(ev);
 }
@@ -103,7 +103,7 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
     return;
   }
 
-  qDebug() << "mouseReleaseEvent()";
+  //  qDebug() << "mouseReleaseEvent()";
 
   QPoint releasePoint = ev->pos();
 
@@ -123,7 +123,7 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev) {
     MyVideo *video = myPlaylist->getVideo(currentVideoId);
     QGraphicsRectItem *boundary = new QGraphicsRectItem(rect);
 
-    qDebug() << "Current frame: " << currentFrame;
+    //    qDebug() << "Current frame: " << currentFrame;
 
     video->addBoundary(currentFrame, currentLinkId, boundary);
 
@@ -172,24 +172,24 @@ void MyGraphicsView::updateBoundary(int frameId) {
 }
 
 void MyGraphicsView::clearBoundary() {
-  qDebug() << "clearBoundary()";
+  //  qDebug() << "clearBoundary()";
 
   scene = new QGraphicsScene(this);
 
   if (pixMapPrim && graphicsLocation == PRIMARY_LOCATION) {
-    qDebug() << "Primary clearBoundary()";
+    //    qDebug() << "Primary clearBoundary()";
     scene->addItem(pixMapPrim);
   }
   if (pixMapSec && graphicsLocation == SECONDARY_LOCATION) {
-    qDebug() << "Secondary clearBoundary()";
+    //    qDebug() << "Secondary clearBoundary()";
     scene->addItem(pixMapSec);
   }
   if (pixMapPlayer && graphicsLocation == PLAYER_LOCATION) {
-    qDebug() << "Player clearBoundary()";
+    //    qDebug() << "Player clearBoundary()";
     scene->addItem(pixMapPlayer);
   }
   if (pixMapPlayer && graphicsLocation == HYPERLINK_LOCATION) {
-    qDebug() << "hyperlink clearBoundary()";
+    //    qDebug() << "hyperlink clearBoundary()";
     scene->addItem(pixMapPlayer);
   }
 
@@ -201,7 +201,7 @@ void MyGraphicsView::clearBoundary() {
 }
 
 void MyGraphicsView::showBoundary(QGraphicsRectItem *boundary, int linkId) {
-  qDebug() << "showBoundary()";
+  //  qDebug() << "showBoundary()";
 
   QPen pen;
 
@@ -218,5 +218,5 @@ void MyGraphicsView::showBoundary(QGraphicsRectItem *boundary, int linkId) {
 void MyGraphicsView::updateCurrentLink(int linkId) {
   currentLinkId = linkId;
 
-  qDebug() << "Current link updated to: " << currentLinkId;
+  //  qDebug() << "Current link updated to: " << currentLinkId;
 }

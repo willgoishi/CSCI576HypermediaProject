@@ -13,17 +13,17 @@
 #include <QMediaService>
 #include <QVideoProbe>
 
-#include <QAudioFormat>
 #include <QDebug>
 #include <QFrame>
 #include <QImage>
+#include <QAudioFormat>
 #include <QMediaPlayer>
 #include <QPoint>
 #include <QString>
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 99 // Max to load
+#define TOTAL_FRAMES 999 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -72,8 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
   fpsTimer = new QTimer();
   fpsTimer->setInterval(33);
   connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
-  // Create audio player
 
+  // Create audio player
   audioPlayer = new QMediaPlayer();
   audioPlayer->setVolume(50);
 
@@ -410,22 +410,33 @@ void MainWindow::tabSelected(int tab) {
 
 void MainWindow::on_playerPlay_clicked() {
   qDebug() << "Player play clicked";
+<<<<<<< HEAD
+  fpsTimer->setInterval(33);
+  connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
+  fpsTimer->start();
+
+  //AudioPlayer -> Play
+  audioPlayer->play();
+=======
 
   // 33*20 + 34*10 == 1000
 
   fpsTimer->start();
 
-  // AudioPlayer -> Play
   audioPlayer->play();
   QString filepath = audioPlayer->currentMedia().canonicalUrl().toString();
   qDebug() << "Current media:" << filepath;
+>>>>>>> audio
 }
 
 void MainWindow::on_playerPause_clicked() {
   qDebug() << "Player pause clicked";
   fpsTimer->stop();
+<<<<<<< HEAD
 
-  // AudioPlayer -> Pause
+  //AudioPlayer -> Pause
+=======
+>>>>>>> audio
   audioPlayer->pause();
 }
 
@@ -433,6 +444,10 @@ void MainWindow::on_playerStop_clicked() {
   qDebug() << "Player stop clicked";
   fpsTimer->stop();
   ui->sliderPlayer->setValue(0);
+
+   //Audio Player -> on stop -> stops and sets position to 0 (in milliseconds) (duration of audio: 300000 milliseconds)
+   audioPlayer->setPosition(0);
+   audioPlayer->stop();
 
   // Go back to previous video
   qDebug() << "originalVideoTitle" << originalVideoTitle;
@@ -508,6 +523,10 @@ void MainWindow::emitPlayerProgressBarSignal(int value) {
 }
 
 void MainWindow::saveJson(QJsonDocument document, QString fileName) {
+
+    qDebug() << document;
+    qDebug() << fileName;
+
   QFile jsonFile(fileName);
   jsonFile.open(QFile::WriteOnly);
   jsonFile.write(document.toJson());
@@ -538,7 +557,7 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
       break;
     }
 
-    if (count % 10 == 0) {
+    if (count % 1000 == 0) {
       qDebug() << "Loaded " << filename;
     }
 
@@ -601,7 +620,7 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
 }
 
 void MainWindow::delay() {
-  QTime dieTime = QTime::currentTime().addMSecs(500);
+  QTime dieTime = QTime::currentTime().addSecs(0.5);
   while (QTime::currentTime() < dieTime)
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
@@ -661,11 +680,10 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
     //    f1.waitForFinished();
 
     //
-    // Audio Player setup
+    //Audio Player setup
     //
     audioPlayer = new QMediaPlayer();
-    audioPlayer->setMedia(
-        QMediaContent(QUrl(directoryPath + "/" + soundFilePath)));
+    audioPlayer->setMedia(QMediaContent(QUrl(directoryPath + "/" + soundFilePath)));
 
   } else if (caller == "importSecondaryButton") {
     //
@@ -681,21 +699,18 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
       MyFrame *frame = new MyFrame(frameCount, directoryPath);
       secondaryVideo->addFrame(frame);
     }
-    if (playlist->playlist.size() > 1) {
-      playlist->playlist.remove(1);
-    }
     playlist->addVideo(secondaryVideo);
 
     //
     // Import
     //
-    secList = QVector<QImage>();
-    QStringList staticConstStringsSecondary;
     staticConstStringsSecondary.append(directoryPath);
     staticConstStringsSecondary.append(caller);
 
-    QtConcurrent::run(this, &MainWindow::imageLoading, imageFileNames,
-                      staticConstStringsSecondary, &secList);
+    QFuture<void> f2 =
+        QtConcurrent::run(this, &MainWindow::imageLoading, imageFileNames,
+                          staticConstStringsSecondary, &secList);
+    //    f2.waitForFinished();
 
   } else if (caller == "videoPlayer") {
 
@@ -708,16 +723,13 @@ void MainWindow::importWithDirPath(QString directoryPath, QString caller) {
     staticConstStringsPlayer.append(directoryPath);
     staticConstStringsPlayer.append(caller);
 
+    qDebug() << "staticConstStringsPlayer";
+
     QVector<QImage> *playerList = new QVector<QImage>();
     playerLists.insert(directoryPath, playerList);
 
     playerFilepath = playerPlaylist->getVideo(0)->videoTitle;
 
-    //    qDebug() << "playerFilePath: " << playerFilepath;
-
-    qDebug() << "playerLists size: " << playerLists.size();
-
-    // Sound
     QDir directory(playerFilepath);
     QString soundFilePath =
         directory.entryList(QStringList() << "*.wav", QDir::Files).first();
