@@ -22,7 +22,7 @@
 #include <QVideoWidget>
 #include <QtWidgets>
 
-#define TOTAL_FRAMES 8999 // Max to load
+#define TOTAL_FRAMES 499 // Max to load
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
   secList = QVector<QImage>();
   playerList = QVector<QImage>();
 
-  //Video Player
+  // Video Player
   fpsTimer = new QTimer();
 
   // Connect sliders to function
@@ -135,19 +135,25 @@ void MainWindow::on_sliderRight_changed(int currentSecondaryFrame) {
   graphicsViewSecondary->pixMapSec = pixMapSec;
 }
 
-void MainWindow::on_sliderPlayer_valueChanged(int frame) {
+void MainWindow::on_sliderPlayer_valueChanged(int currentPlayerFrame) {
+
+  if (currentPlayerFrame >= playerFramesLoaded) {
+    qDebug() << "Frames not loaded! " << secondaryFramesLoaded;
+    return;
+  }
+
   qDebug() << "on_sliderPlayer_valueChanged()";
 
   // Update boundaries
-  ui->frameCountPlayer->setText(QString::number(frame));
+  ui->frameCountPlayer->setText(QString::number(currentPlayerFrame));
 
-  pixMapPlayer =
-      new QGraphicsPixmapItem(QPixmap::fromImage(playerList.at(frame)));
+  pixMapPlayer = new QGraphicsPixmapItem(
+      QPixmap::fromImage(playerList.at(currentPlayerFrame)));
 
   graphicsViewPlayer->scene->addItem(pixMapPlayer);
   graphicsViewPlayer->pixMapPlayer = pixMapPlayer;
 
-  graphicsViewPlayer->updateBoundary(frame);
+  graphicsViewPlayer->updateBoundary(currentPlayerFrame);
 }
 
 void MainWindow::on_createNewHyperlink_clicked() {
@@ -260,7 +266,9 @@ void MainWindow::tabSelected(int tab) {
     // Create playlist, add video at end of loop
     playerPlaylist = new MyPlaylist();
 
-    if(jsonArray.size() == 0) {return;}
+    if (jsonArray.size() == 0) {
+      return;
+    }
 
     foreach (const QJsonValue &v, jsonArray) {
 
@@ -367,33 +375,28 @@ void MainWindow::tabSelected(int tab) {
   }
 }
 
-void MainWindow::on_playerPlay_clicked()
-{
-    qDebug() << "Player play clicked";
-    fpsTimer->setInterval(17);
-    connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
-    fpsTimer->start();
+void MainWindow::on_playerPlay_clicked() {
+  qDebug() << "Player play clicked";
+  fpsTimer->setInterval(17);
+  connect(fpsTimer, SIGNAL(timeout()), this, SLOT(setterFunction()));
+  fpsTimer->start();
 }
 
-void MainWindow::on_playerPause_clicked()
-{
-    qDebug() << "Player pause clicked";
+void MainWindow::on_playerPause_clicked() {
+  qDebug() << "Player pause clicked";
+  fpsTimer->stop();
+}
+
+void MainWindow::on_playerStop_clicked() {
+  qDebug() << "Player stop clicked";
+  if (fpsTimer->isActive()) {
     fpsTimer->stop();
+    ui->sliderPlayer->setValue(0);
+  }
 }
 
-void MainWindow::on_playerStop_clicked()
-{
-    qDebug() << "Player stop clicked";
-    if(fpsTimer->isActive())
-    {
-        fpsTimer->stop();
-        ui->sliderPlayer->setValue(0);
-    }
-}
-
-void MainWindow::setterFunction()
-{
-    ui->sliderPlayer->setValue(ui->sliderPlayer->value()+1);
+void MainWindow::setterFunction() {
+  ui->sliderPlayer->setValue(ui->sliderPlayer->value() + 1);
 }
 
 void MainWindow::emitPrimaryProgressBarSignal(int value) {
@@ -402,6 +405,10 @@ void MainWindow::emitPrimaryProgressBarSignal(int value) {
 
 void MainWindow::emitSecondaryProgressBarSignal(int value) {
   emit secondarySignalProgress(value);
+}
+
+void MainWindow::emitPlayerProgressBarSignal(int value) {
+  emit playerSignalProgress(value);
 }
 
 void MainWindow::saveJson(QJsonDocument document, QString fileName) {
@@ -420,6 +427,13 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
                               QVector<QImage> *images, QStringList *fileNames,
                               QStringList *fileNamesPrev) {
 
+  connect(this, SIGNAL(primarySignalProgress(int)), ui->primaryVideoProgressBar,
+          SLOT(setValue(int)));
+  connect(this, SIGNAL(secondarySignalProgress(int)),
+          ui->secondaryVideoProgressBar, SLOT(setValue(int)));
+  connect(this, SIGNAL(secondarySignalProgress(int)),
+          ui->secondaryVideoProgressBar, SLOT(setValue(int)));
+
   int count = 0;
   foreach (QString filename, imageFileNames) {
 
@@ -429,24 +443,15 @@ void MainWindow::imageLoading(QStringList imageFileNames, QStringList constStrs,
 
     if (constStrs[2] == "primary") {
       primaryFramesLoaded = count;
-      //      ui->primaryVideoProgressBar->setValue(primaryFramesLoaded);
-
-      connect(this, SIGNAL(primarySignalProgress(int)),
-              ui->primaryVideoProgressBar, SLOT(setValue(int)));
       this->emitPrimaryProgressBarSignal(primaryFramesLoaded);
     }
     if (constStrs[2] == "secondary") {
       secondaryFramesLoaded = count;
-      //      ui->secondaryVideoProgressBar->setValue(secondaryFramesLoaded);
-
-      connect(this, SIGNAL(secondarySignalProgress(int)),
-              ui->secondaryVideoProgressBar, SLOT(setValue(int)));
       this->emitSecondaryProgressBarSignal(secondaryFramesLoaded);
     }
     if (constStrs[2] == "player") {
       playerFramesLoaded = count;
-      ui->playerVideoProgressBar->setValue(playerFramesLoaded);
-      //      ui->playerVideoProgressBar->update();
+      this->emitPlayerProgressBarSignal(playerFramesLoaded);
     }
 
     QString filePath = constStrs.at(0) + "/" + filename;

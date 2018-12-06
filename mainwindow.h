@@ -35,6 +35,7 @@ public:
   ~MainWindow();
   void emitPrimaryProgressBarSignal(int);
   void emitSecondaryProgressBarSignal(int);
+  void emitPlayerProgressBarSignal(int);
 
 private slots:
   void on_sliderLeft_changed(int);
@@ -60,6 +61,7 @@ private slots:
 signals:
   void primarySignalProgress(int);
   void secondarySignalProgress(int);
+  void playerSignalProgress(int);
 
 private:
   void imageLoading(QStringList imageFileNames, QStringList constStrs,
